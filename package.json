@@ -1,0 +1,12 @@
+{
+  "name": "carrier-restriction-monitor",
+  "version": "1.0.0",
+  "description": "Daily scan of countries major carriers are not shipping to",
+  "type": "module",
+  "scripts": {
+    "scan": "node scraper.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
