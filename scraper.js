@@ -665,7 +665,13 @@ function genCarrierCards(carriers) {
       ${moreBtn}
     </div>
     <div class="card-footer">
-      <span class="card-note">${c.note ? esc(c.note) : ""}</span>
+      <div>
+        <span class="card-note">${c.note ? esc(c.note) : ""}</span>
+        <a class="card-csv" href="${dataUri(genCarrierCSV([c]))}" download="${c.id}-restrictions-${new Date().toISOString().slice(0,10)}.csv">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </a>
+      </div>
       <div class="src-block">
         <div class="src-label">Source</div>
         <a class="src-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(sourceLabel(c.source_url))}</a>
@@ -749,11 +755,20 @@ function generateDashboard() {
   --sus-bg: #fff7ed; --sus-text: #9a3412; --sus-dot: #ea580c;
   --lim-bg: #fefce8; --lim-text: #92400e; --lim-dot: #ca8a04;
 }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+body.dark {
+  --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #f1f5f9; --muted: #94a3b8;
+  --header-bg: #020617;
+  --san-bg: #450a0a; --san-text: #fca5a5;
+  --sus-bg: #431407; --sus-text: #fdba74;
+  --lim-bg: #422006; --lim-text: #fcd34d;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: background .2s, color .2s; }
 
-header { background: var(--header-bg); color: #fff; padding: 24px 32px; }
-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-header p  { color: #94a3b8; font-size: 0.875rem; margin-top: 4px; }
+header { background: var(--header-bg); color: #fff; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
+header .header-text h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+header .header-text p  { color: #94a3b8; font-size: 0.875rem; margin-top: 4px; }
+.dark-toggle { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; flex-shrink: 0; transition: background .15s; }
+.dark-toggle:hover { background: rgba(255,255,255,.2); }
 
 .stats { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
 .stat  { flex: 1; min-width: 130px; background: var(--card); padding: 14px 20px; }
@@ -850,6 +865,10 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 .view-title { font-size: .8rem; color: var(--muted); font-weight: 500; }
 .csv-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: .78rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; text-decoration: none; cursor: pointer; transition: all .12s; }
 .csv-btn:hover { background: #bbf7d0; border-color: #4ade80; }
+.card-csv { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: .72rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; padding: 3px 9px; text-decoration: none; }
+.card-csv:hover { background: #bbf7d0; }
+.dark .card-csv { color: #4ade80; background: #052e16; border-color: #166534; }
+.dark .card-csv:hover { background: #14532d; }
 
 footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); }
 
@@ -864,8 +883,11 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
 <body>
 
 <header>
-  <h1>Carrier Restriction Monitor</h1>
-  <p>Countries major carriers and 3PLs are NOT shipping to &mdash; refreshed daily</p>
+  <div class="header-text">
+    <h1>Carrier Restriction Monitor</h1>
+    <p>Countries major carriers and 3PLs are NOT shipping to &mdash; refreshed daily</p>
+  </div>
+  <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode">🌙</button>
 </header>
 
 <div class="stats">
@@ -1019,6 +1041,18 @@ function applyFilters() {
     document.getElementById("country-list").style.display = visible2 > 0 ? "" : "none";
   }
 }
+
+// Dark mode
+(function() {
+  var btn = document.getElementById("dark-toggle");
+  function setDark(on) {
+    document.body.classList.toggle("dark", on);
+    btn.textContent = on ? "☀️" : "🌙";
+    try { localStorage.setItem("dark", on ? "1" : "0"); } catch(e) {}
+  }
+  try { if (localStorage.getItem("dark") === "1") setDark(true); } catch(e) {}
+  btn.addEventListener("click", function() { setDark(!document.body.classList.contains("dark")); });
+})();
 
 // Wire up controls
 document.getElementById("search").addEventListener("input", function(e) {
