@@ -11,7 +11,7 @@ if errorlevel 1 (
 
 echo.
 echo Pushing updated dashboard to GitHub...
-git add dashboard.html
+git add index.html
 git commit -m "Daily scan %date%"
 git push origin main
 
