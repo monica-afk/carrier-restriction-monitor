@@ -36,6 +36,13 @@ const L = "limited";     // Partial / significantly reduced service
 
 function r(country, reason, type) { return { country, reason, type }; }
 
+// ── Product restriction helpers ────────────────────────────────────────────────
+const PP = "prohibited";   // Not accepted under any circumstances
+const PR = "restricted";   // Accepted with conditions / documentation required
+const PH = "hazmat";       // Requires hazmat handling / special labeling
+
+function p(product, reason, type) { return { product, reason, type }; }
+
 // ── Shared baseline data ───────────────────────────────────────────────────────
 const OFAC_US = [
   r("Cuba",                      "OFAC embargo",                 S),
@@ -386,6 +393,156 @@ const CARRIERS = [
   },
 ];
 
+// ── Shared product baseline data ───────────────────────────────────────────────
+const UNIVERSAL_PROHIBITED = [
+  p("Explosives / fireworks",          "Prohibited — commercial carriers do not accept explosive materials",         PP),
+  p("Illegal drugs / narcotics",       "Prohibited by federal and international law",                                PP),
+  p("Chemical / biological weapons",   "Prohibited by law",                                                         PP),
+  p("Radioactive materials (Class 7)", "Prohibited except NRC/IAEA-licensed shippers with prior carrier approval",  PP),
+];
+
+const COMMON_HAZMAT = [
+  p("Lithium batteries (loose/standalone)", "IATA/DOT regulated — PI 965–970; Wh limits, special packaging & labeling", PH),
+  p("Aerosols (pressurized cans)",          "Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required",           PH),
+  p("Perfume / cologne",                    "Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required",       PH),
+  p("Dry ice",                              "UN 1845 (CO₂) — weight limits, ventilation holes, special labeling",        PH),
+];
+
+// ── Product restrictions by carrier ID ────────────────────────────────────────
+const PRODUCT_RESTRICTIONS = {
+  ups: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / ammunition",           "Restricted: UPS Firearms Program enrollment required; adult signature; FFL for handguns",          PR),
+    p("Alcohol / wine / spirits",        "Restricted: UPS licensed shipper agreement required; state-to-state rules vary",                   PR),
+    p("Tobacco / cigarettes",            "Restricted: PACT Act compliance required; no consumer delivery in most states",                    PR),
+    p("Cannabis / marijuana",            "Prohibited: illegal under US federal law and internationally",                                      PP),
+    p("Live animals",                    "Restricted: carrier approval required; limited services and species only",                         PR),
+    p("Human remains (cremated)",        "Restricted: declared as cremated remains; inner/outer container requirements apply",               PR),
+    p("Cash / currency (international)", "Prohibited in international shipments",                                                             PP),
+    p("Perishables",                     "Restricted: insulated/temperature-control packaging required; transit time not guaranteed",         PR),
+  ],
+  fedex: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / ammunition",           "Restricted: FedEx Firearms Program required; adult signature; FFL for handguns",                   PR),
+    p("Live animals",                    "Prohibited: FedEx Express does not accept live animals (very limited Ground exceptions)",            PP),
+    p("Alcohol / wine / spirits",        "Restricted: licensed shipper agreement required; domestic US only for most services",               PR),
+    p("Tobacco / cigarettes",            "Restricted: PACT Act compliance; no consumer delivery",                                             PR),
+    p("Cannabis / marijuana",            "Prohibited: federal law",                                                                            PP),
+    p("Fresh perishables",               "Restricted: FedEx Custom Critical or insulated cold pack required; no standard-service guarantee",  PR),
+    p("Human remains (cremated)",        "Restricted: declared as cremated remains; special packaging and adult signature required",          PR),
+    p("Cash / currency (international)", "Prohibited in international shipments",                                                             PP),
+  ],
+  dhl_express: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",       "Prohibited internationally; domestic acceptance extremely limited",                                         PP),
+    p("Alcohol / wine / spirits", "Restricted: country-specific rules; licensed importer/exporter required; many destinations prohibited",    PR),
+    p("Cannabis / marijuana",     "Prohibited: illegal under most national laws",                                                              PP),
+    p("Tobacco / cigarettes",     "Restricted: licensing and import permit required; destination-specific rules apply",                        PR),
+    p("Cash / currency",          "Prohibited",                                                                                                PP),
+    p("Perishables",              "Restricted: adequate packaging required; transit time not guaranteed",                                      PR),
+  ],
+  usps: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Lithium batteries (loose/standalone)", "Surface mail only domestically — prohibited in air; IATA restrictions for international mail",  PH),
+    p("Perfume / cologne",                    "Flammable — surface mail only domestic; air mail prohibited for most international destinations", PH),
+    p("Aerosols (pressurized cans)",          "Surface mail only; prohibited in air mail; strict quantity limits",                             PH),
+    p("Dry ice",                              "Restricted: surface mail only; max 2.27 kg (5 lb) per package; vent holes and labeling required", PH),
+    p("Firearms / handguns",                  "Restricted: handguns to/from licensed dealers (FFL) only; adult signature required",            PR),
+    p("Long guns (rifles / shotguns)",        "Restricted: legal recipient only; adult signature required",                                    PR),
+    p("Alcohol / wine",                       "Prohibited domestically (rare state permit exceptions); prohibited in international mail",       PP),
+    p("Tobacco / cigarettes",                 "Prohibited: PACT Act bans USPS delivery of cigarettes/smokeless tobacco to consumers",          PP),
+    p("Cannabis / marijuana",                 "Prohibited: federal law",                                                                        PP),
+    p("Live animals",                         "Restricted: limited to day-old poultry, adult birds, invertebrates — carrier approval required", PR),
+    p("Cash / currency (international)",      "Prohibited in international mail",                                                               PP),
+  ],
+  canada_post: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",    "Restricted: Canadian Firearms Act compliance; registration certificate and mailing permit required",            PR),
+    p("Alcohol / wine",        "Prohibited domestically except via licensed provincial liquor board channels; internationally prohibited to most countries", PP),
+    p("Cannabis",              "Prohibited in international mail; domestic allowed only for licensed Cannabis Act retailers to adults",          PR),
+    p("Tobacco / cigarettes",  "Restricted: duty/excise tax compliance required; destination-specific restrictions apply",                     PR),
+    p("Cash / currency",       "Prohibited in international mail",                                                                              PP),
+    p("Live animals",          "Restricted: limited species only; carrier approval required",                                                   PR),
+  ],
+  royal_mail: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Lithium batteries (loose/standalone)", "Prohibited in air mail — surface mail only with IATA-compliant packaging",                      PH),
+    p("Aerosols / pressurized items",         "Prohibited in air mail; surface mail only with strict quantity limits",                          PH),
+    p("Perfume / cologne",                    "Prohibited in air mail (Class 3 flammable); surface mail allowed within limits",                 PH),
+    p("Firearms / weapons",                   "Prohibited",                                                                                     PP),
+    p("Alcohol / wine",                       "Restricted: country-specific rules; import duty and licensing compliance required",              PR),
+    p("Cannabis",                             "Prohibited",                                                                                     PP),
+    p("Tobacco",                              "Restricted: import duties and destination compliance required",                                  PR),
+    p("Cash / currency",                      "Prohibited in international mail",                                                               PP),
+    p("Live animals",                         "Prohibited",                                                                                     PP),
+  ],
+  tnt: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",       "Prohibited internationally; extremely limited domestic acceptance",                                          PP),
+    p("Alcohol / wine / spirits", "Restricted: country-specific licensing and import permits required",                                         PR),
+    p("Cannabis",                 "Prohibited",                                                                                                  PP),
+    p("Cash / currency",          "Prohibited",                                                                                                  PP),
+    p("Tobacco",                  "Restricted: import compliance and licensing required",                                                       PR),
+  ],
+  purolator: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",    "Restricted: must comply with Canadian Firearms Act; carrier approval required",                                  PR),
+    p("Alcohol / wine",        "Restricted: provincial regulations apply; licensed shipper agreement required",                                  PR),
+    p("Cannabis",              "Restricted: domestic only; licensed Cannabis Act retailer required",                                             PR),
+    p("Cash / currency",       "Prohibited",                                                                                                     PP),
+    p("Tobacco",               "Restricted: excise compliance required",                                                                        PR),
+  ],
+  shipbob: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Firearms / weapons",         "Prohibited in ShipBob warehouses",                                                                         PP),
+    p("Alcohol / wine",             "Restricted: state licensing required; limited to select warehouse locations",                               PR),
+    p("Cannabis / marijuana",       "Prohibited (cannabis); CBD products require compliance review and pre-approval",                            PP),
+    p("Tobacco / vaping products",  "Restricted: PACT Act compliance and age verification required",                                            PR),
+    p("Hazardous materials",        "Restricted: limited acceptance; carrier and warehouse pre-approval required",                               PR),
+    p("Lithium batteries (loose)",  "Restricted: carrier-dependent DG compliance required; pre-approval needed",                                PR),
+    p("Perishables",                "Restricted: cold chain warehouses only; limited availability",                                              PR),
+  ],
+  flexport: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",     "Restricted: ITAR/EAR export license required; strict compliance documentation",                                PR),
+    p("Alcohol / wine",         "Restricted: import/export licensing required; destination-specific rules",                                     PR),
+    p("Cannabis",               "Prohibited internationally",                                                                                   PP),
+    p("Pharmaceuticals",        "Restricted: FDA/import compliance required; prescription drugs need prior approval",                           PR),
+    p("Food items",             "Restricted: FDA Prior Notice required for US imports; country-specific import rules apply",                    PR),
+    p("Dual-use goods",         "Restricted: Export Administration Regulations (EAR) compliance and licensing may be required",                 PR),
+  ],
+  easyship: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Firearms / weapons",          "Prohibited across all connected carriers",                                                                 PP),
+    p("Lithium batteries (loose)",   "Restricted: carrier-dependent; some carriers require pre-approval for standalone batteries",               PR),
+    p("Perfume / cologne",           "Hazmat: many connected carriers prohibit or severely limit via air",                                       PH),
+    p("Alcohol",                     "Restricted: carrier and destination-dependent; licensing often required",                                  PR),
+    p("Cannabis",                    "Prohibited",                                                                                               PP),
+    p("Tobacco / vaping",            "Restricted: carrier and destination rules apply",                                                         PR),
+  ],
+  shippo: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Firearms / weapons",          "Prohibited on standard Shippo carrier integrations",                                                       PP),
+    p("Lithium batteries (loose)",   "Inherits carrier restrictions — most carriers require DG compliance documentation",                        PR),
+    p("Hazardous materials",         "Inherits carrier restrictions — most restrict or prohibit hazmat shipments",                               PR),
+    p("Alcohol / cannabis",          "Prohibited or requires licensed carrier agreement beyond standard Shippo access",                          PP),
+  ],
+  shipstation: [
+    ...UNIVERSAL_PROHIBITED,
+    p("Firearms / weapons",          "Prohibited on standard ShipStation carrier integrations",                                                  PP),
+    p("Lithium batteries (loose)",   "Inherits from connected carrier — IATA/DOT DG rules apply",                                               PR),
+    p("Hazardous materials",         "Inherits from connected carrier — most require DG/hazmat approval",                                       PR),
+    p("Alcohol / cannabis",          "Prohibited or requires licensed shipper agreement via connected carrier",                                  PP),
+  ],
+  pitney_bowes: [
+    ...UNIVERSAL_PROHIBITED, ...COMMON_HAZMAT,
+    p("Firearms / weapons",  "Prohibited",                                                                                                       PP),
+    p("Alcohol / cannabis",  "Prohibited in cross-border ecommerce services",                                                                    PP),
+    p("Tobacco",             "Restricted: licensing and age verification required",                                                              PR),
+    p("Pharmaceuticals",     "Restricted: FDA/import compliance and pre-approval required for most destinations",                                PR),
+  ],
+};
+
 
 // ── Live scrapers ──────────────────────────────────────────────────────────────
 
@@ -612,12 +769,27 @@ function genStats(carriers) {
     else if (r.type === "suspended") nx++;
     else nl++;
   }));
+
+  const products = new Set();
+  let np = 0, nh = 0, nr = 0;
+  Object.values(PRODUCT_RESTRICTIONS).forEach(prods => prods.forEach(pr => {
+    products.add(pr.product);
+    if (pr.type === "prohibited") np++;
+    else if (pr.type === "hazmat") nh++;
+    else nr++;
+  }));
+
   return `
     <div class="stat"><div class="stat-value">${carriers.length}</div><div class="stat-label">Carriers Tracked</div></div>
     <div class="stat"><div class="stat-value">${countries.size}</div><div class="stat-label">Countries Flagged</div></div>
     <div class="stat"><div class="stat-value red">${ns}</div><div class="stat-label">Sanctions Entries</div></div>
     <div class="stat"><div class="stat-value orange">${nx}</div><div class="stat-label">Suspended Entries</div></div>
-    <div class="stat"><div class="stat-value amber">${nl}</div><div class="stat-label">Limited Entries</div></div>`;
+    <div class="stat"><div class="stat-value amber">${nl}</div><div class="stat-label">Limited Entries</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-value">${products.size}</div><div class="stat-label">Products Flagged</div></div>
+    <div class="stat"><div class="stat-value red">${np}</div><div class="stat-label">Prohibited Items</div></div>
+    <div class="stat"><div class="stat-value orange">${nh}</div><div class="stat-label">Hazmat Items</div></div>
+    <div class="stat"><div class="stat-value amber">${nr}</div><div class="stat-label">Restricted Items</div></div>`;
 }
 
 function genCarrierCards(carriers) {
@@ -730,6 +902,82 @@ function genCountryRows(carriers) {
   }).join("\n");
 }
 
+// ── Product restriction rendering ──────────────────────────────────────────────
+
+function prodDot(t) {
+  if (t === "prohibited") return '<span class="dot dp"></span>';
+  if (t === "hazmat")     return '<span class="dot dh"></span>';
+  return '<span class="dot dr"></span>';
+}
+
+function genProductCSV() {
+  const rows = [["Product", "Restriction Type", "Carrier", "Full Name", "Category", "HQ", "Reason"]];
+  Object.entries(PRODUCT_RESTRICTIONS).forEach(([id, prods]) => {
+    const carrier = CARRIERS.find(c => c.id === id);
+    if (!carrier) return;
+    prods.forEach(pr => {
+      rows.push([pr.product, pr.type, carrier.name, carrier.full_name, carrier.category, carrier.hq, pr.reason]);
+    });
+  });
+  return rows.map(r => r.map(csvEscape).join(",")).join("\r\n");
+}
+
+function genProductRows() {
+  const map = {};
+  const sevOrder = { prohibited: 0, hazmat: 1, restricted: 2 };
+  Object.entries(PRODUCT_RESTRICTIONS).forEach(([id, prods]) => {
+    const carrier = CARRIERS.find(c => c.id === id);
+    if (!carrier) return;
+    prods.forEach(pr => {
+      if (!map[pr.product]) map[pr.product] = { topType: pr.type, entries: [] };
+      if ((sevOrder[pr.type] ?? 3) < (sevOrder[map[pr.product].topType] ?? 3)) {
+        map[pr.product].topType = pr.type;
+      }
+      map[pr.product].entries.push({ carrier: carrier.name, category: carrier.category, reason: pr.reason, type: pr.type });
+    });
+  });
+
+  const products = Object.keys(map).sort((a, b) => {
+    const ao = sevOrder[map[a].topType] ?? 3;
+    const bo = sevOrder[map[b].topType] ?? 3;
+    if (ao !== bo) return ao - bo;
+    return map[b].entries.length - map[a].entries.length;
+  });
+
+  return products.map(product => {
+    const { entries } = map[product];
+    const types = [...new Set(entries.map(e => e.type))];
+    const sevMap = { prohibited: 0, hazmat: 0, restricted: 0 };
+    entries.forEach(e => { if (e.type in sevMap) sevMap[e.type]++; });
+
+    const pills = [
+      sevMap.prohibited ? `<span class="sp sp-p">${sevMap.prohibited} Prohibited</span>` : "",
+      sevMap.hazmat     ? `<span class="sp sp-h">${sevMap.hazmat} Hazmat</span>`         : "",
+      sevMap.restricted ? `<span class="sp sp-r">${sevMap.restricted} Restricted</span>` : "",
+    ].filter(Boolean).join("");
+
+    const carRows = entries.map(e => `
+        <div class="cr-row">
+          ${prodDot(e.type)}
+          <span class="cr-name">${esc(e.carrier)}</span>
+          <span class="cr-reason">${esc(e.reason)}</span>
+        </div>`).join("");
+
+    return `
+  <div class="prow" data-ptypes="${types.join(" ")}">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">${esc(product)}</div>
+        <div class="pm">${entries.length} carrier${entries.length !== 1 ? "s" : ""} with restrictions</div>
+      </div>
+      <div class="spills">${pills}</div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">${carRows}</div>
+  </div>`;
+  }).join("\n");
+}
+
 function generateDashboard() {
   const now         = new Date();
   const statsHtml   = genStats(CARRIERS);
@@ -739,6 +987,8 @@ function generateDashboard() {
   const dateStamp   = now.toISOString().slice(0, 10);
   const carrierCsvUri = dataUri(genCarrierCSV(CARRIERS));
   const countryCsvUri = dataUri(genCountryCSV(CARRIERS));
+  const productHtml   = genProductRows();
+  const productCsvUri = dataUri(genProductCSV());
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -872,11 +1122,31 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 
 footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); }
 
+/* ── Product view ──────────────────────────────────────────────────────────── */
+.dp { background: var(--san-dot); }
+.dh { background: var(--sus-dot); }
+.dr { background: #7c3aed; }
+.sp-p { background: var(--san-bg); color: var(--san-text); }
+.sp-h { background: var(--sus-bg); color: var(--sus-text); }
+.sp-r { background: #f5f3ff; color: #5b21b6; }
+body.dark .sp-r { background: #2e1065; color: #c4b5fd; }
+.product-list { display: flex; flex-direction: column; gap: 10px; }
+.prow { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.prow.hidden { display: none; }
+.prow-hd { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+.prow-hd:hover { background: var(--bg); }
+.pn { font-weight: 700; font-size: 1rem; }
+.pm { font-size: .8rem; color: var(--muted); }
+.prow-bd { display: none; padding: 0 18px 14px; }
+.prow-bd.open { display: block; }
+.stat-div { width: 1px; background: var(--border); margin: 8px 0; align-self: stretch; flex-shrink: 0; }
+
 @media (max-width: 600px) {
   header { padding: 18px 16px; }
   main { padding: 16px; }
   .controls { padding: 12px 16px; }
   .carrier-grid { grid-template-columns: 1fr; }
+  .stat-div { display: none; }
 }
 </style>
 </head>
@@ -899,12 +1169,19 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="search" id="search" placeholder="Search carrier or country..." autocomplete="off">
   </div>
-  <div class="filter-group">
+  <div class="filter-group" id="type-filter-main">
     <label>Type</label>
     <button class="pill active" data-type="all">All</button>
     <button class="pill" data-type="sanctions">Sanctions</button>
     <button class="pill" data-type="suspended">Suspended</button>
     <button class="pill" data-type="limited">Limited</button>
+  </div>
+  <div class="filter-group" id="type-filter-product" style="display:none">
+    <label>Type</label>
+    <button class="pill active" data-ptype="all">All</button>
+    <button class="pill" data-ptype="prohibited">Prohibited</button>
+    <button class="pill" data-ptype="hazmat">Hazmat</button>
+    <button class="pill" data-ptype="restricted">Restricted</button>
   </div>
   <div class="filter-group">
     <label>Category</label>
@@ -918,6 +1195,7 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
   <div class="view-toggle">
     <button class="view-btn active" id="btn-carrier" onclick="switchView('carrier')">By Carrier</button>
     <button class="view-btn" id="btn-country" onclick="switchView('country')">By Country</button>
+    <button class="view-btn" id="btn-product" onclick="switchView('product')">By Product</button>
   </div>
 </div>
 
@@ -948,6 +1226,19 @@ ${countryHtml}
     </div>
     <div class="empty hidden" id="country-empty"><strong>No countries match your filters.</strong>Try broadening your search.</div>
   </div>
+  <div id="view-product" style="display:none">
+    <div class="view-header">
+      <span class="view-title">Products carriers restrict or prohibit — sorted by severity, click to expand</span>
+      <a class="csv-btn" href="${productCsvUri}" download="carrier-restrictions-by-product-${dateStamp}.csv">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </a>
+    </div>
+    <div class="product-list" id="product-list">
+${productHtml}
+    </div>
+    <div class="empty hidden" id="product-empty"><strong>No products match your filters.</strong>Try broadening your search.</div>
+  </div>
 </main>
 
 <footer>
@@ -960,14 +1251,19 @@ ${countryHtml}
 var currentView = "carrier";
 var typeFilter  = "all";
 var catFilter   = "all";
+var ptypeFilter = "all";
 var searchQuery = "";
 
 function switchView(v) {
   currentView = v;
   document.getElementById("view-carrier").style.display = v === "carrier" ? "" : "none";
   document.getElementById("view-country").style.display = v === "country" ? "" : "none";
+  document.getElementById("view-product").style.display = v === "product" ? "" : "none";
   document.getElementById("btn-carrier").classList.toggle("active", v === "carrier");
   document.getElementById("btn-country").classList.toggle("active", v === "country");
+  document.getElementById("btn-product").classList.toggle("active", v === "product");
+  document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
+  document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
   applyFilters();
 }
 
@@ -980,6 +1276,13 @@ function toggleMore(btn, extra) {
 }
 
 function toggleCountry(hd) {
+  var body = hd.nextElementSibling;
+  var chev = hd.querySelector(".chev");
+  body.classList.toggle("open");
+  chev.classList.toggle("open");
+}
+
+function toggleProduct(hd) {
   var body = hd.nextElementSibling;
   var chev = hd.querySelector(".chev");
   body.classList.toggle("open");
@@ -1025,7 +1328,7 @@ function applyFilters() {
     document.getElementById("carrier-empty").classList.toggle("hidden", visible > 0);
     document.getElementById("carrier-grid").style.display = visible > 0 ? "" : "none";
 
-  } else {
+  } else if (currentView === "country") {
     var rows = document.querySelectorAll(".crow");
     var visible2 = 0;
     rows.forEach(function(row) {
@@ -1039,6 +1342,20 @@ function applyFilters() {
     });
     document.getElementById("country-empty").classList.toggle("hidden", visible2 > 0);
     document.getElementById("country-list").style.display = visible2 > 0 ? "" : "none";
+
+  } else {
+    var prows = document.querySelectorAll(".prow");
+    var visible3 = 0;
+    prows.forEach(function(row) {
+      var ptypeOk  = ptypeFilter === "all" || row.dataset.ptypes.indexOf(ptypeFilter) !== -1;
+      var text     = row.textContent.toLowerCase();
+      var searchOk = !q || text.includes(q);
+      var show = ptypeOk && searchOk;
+      row.classList.toggle("hidden", !show);
+      if (show) visible3++;
+    });
+    document.getElementById("product-empty").classList.toggle("hidden", visible3 > 0);
+    document.getElementById("product-list").style.display = visible3 > 0 ? "" : "none";
   }
 }
 
@@ -1073,6 +1390,15 @@ document.querySelectorAll("[data-cat]").forEach(function(btn) {
   btn.addEventListener("click", function() {
     catFilter = btn.dataset.cat;
     document.querySelectorAll("[data-cat]").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    applyFilters();
+  });
+});
+
+document.querySelectorAll("[data-ptype]").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    ptypeFilter = btn.dataset.ptype;
+    document.querySelectorAll("[data-ptype]").forEach(function(b) { b.classList.remove("active"); });
     btn.classList.add("active");
     applyFilters();
   });

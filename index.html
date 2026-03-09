@@ -130,11 +130,31 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 
 footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); }
 
+/* ── Product view ──────────────────────────────────────────────────────────── */
+.dp { background: var(--san-dot); }
+.dh { background: var(--sus-dot); }
+.dr { background: #7c3aed; }
+.sp-p { background: var(--san-bg); color: var(--san-text); }
+.sp-h { background: var(--sus-bg); color: var(--sus-text); }
+.sp-r { background: #f5f3ff; color: #5b21b6; }
+body.dark .sp-r { background: #2e1065; color: #c4b5fd; }
+.product-list { display: flex; flex-direction: column; gap: 10px; }
+.prow { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.prow.hidden { display: none; }
+.prow-hd { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+.prow-hd:hover { background: var(--bg); }
+.pn { font-weight: 700; font-size: 1rem; }
+.pm { font-size: .8rem; color: var(--muted); }
+.prow-bd { display: none; padding: 0 18px 14px; }
+.prow-bd.open { display: block; }
+.stat-div { width: 1px; background: var(--border); margin: 8px 0; align-self: stretch; flex-shrink: 0; }
+
 @media (max-width: 600px) {
   header { padding: 18px 16px; }
   main { padding: 16px; }
   .controls { padding: 12px 16px; }
   .carrier-grid { grid-template-columns: 1fr; }
+  .stat-div { display: none; }
 }
 </style>
 </head>
@@ -155,6 +175,11 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
     <div class="stat"><div class="stat-value red">161</div><div class="stat-label">Sanctions Entries</div></div>
     <div class="stat"><div class="stat-value orange">70</div><div class="stat-label">Suspended Entries</div></div>
     <div class="stat"><div class="stat-value amber">176</div><div class="stat-label">Limited Entries</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-value">34</div><div class="stat-label">Products Flagged</div></div>
+    <div class="stat"><div class="stat-value red">89</div><div class="stat-label">Prohibited Items</div></div>
+    <div class="stat"><div class="stat-value orange">40</div><div class="stat-label">Hazmat Items</div></div>
+    <div class="stat"><div class="stat-value amber">48</div><div class="stat-label">Restricted Items</div></div>
 </div>
 
 <div class="controls">
@@ -162,12 +187,19 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="search" id="search" placeholder="Search carrier or country..." autocomplete="off">
   </div>
-  <div class="filter-group">
+  <div class="filter-group" id="type-filter-main">
     <label>Type</label>
     <button class="pill active" data-type="all">All</button>
     <button class="pill" data-type="sanctions">Sanctions</button>
     <button class="pill" data-type="suspended">Suspended</button>
     <button class="pill" data-type="limited">Limited</button>
+  </div>
+  <div class="filter-group" id="type-filter-product" style="display:none">
+    <label>Type</label>
+    <button class="pill active" data-ptype="all">All</button>
+    <button class="pill" data-ptype="prohibited">Prohibited</button>
+    <button class="pill" data-ptype="hazmat">Hazmat</button>
+    <button class="pill" data-ptype="restricted">Restricted</button>
   </div>
   <div class="filter-group">
     <label>Category</label>
@@ -181,6 +213,7 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
   <div class="view-toggle">
     <button class="view-btn active" id="btn-carrier" onclick="switchView('carrier')">By Carrier</button>
     <button class="view-btn" id="btn-country" onclick="switchView('country')">By Country</button>
+    <button class="view-btn" id="btn-product" onclick="switchView('product')">By Product</button>
   </div>
 </div>
 
@@ -5066,10 +5099,1315 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
     <div class="empty hidden" id="country-empty"><strong>No countries match your filters.</strong>Try broadening your search.</div>
   </div>
+  <div id="view-product" style="display:none">
+    <div class="view-header">
+      <span class="view-title">Products carriers restrict or prohibit — sorted by severity, click to expand</span>
+      <a class="csv-btn" href="data:text/csv;charset=utf-8,Product%2CRestriction%20Type%2CCarrier%2CFull%20Name%2CCategory%2CHQ%2CReason%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20ammunition%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20UPS%20Firearms%20Program%20enrollment%20required%3B%20adult%20signature%3B%20FFL%20for%20handguns%0D%0AAlcohol%20%2F%20wine%20%2F%20spirits%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20UPS%20licensed%20shipper%20agreement%20required%3B%20state-to-state%20rules%20vary%0D%0ATobacco%20%2F%20cigarettes%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20PACT%20Act%20compliance%20required%3B%20no%20consumer%20delivery%20in%20most%20states%0D%0ACannabis%20%2F%20marijuana%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%3A%20illegal%20under%20US%20federal%20law%20and%20internationally%0D%0ALive%20animals%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20carrier%20approval%20required%3B%20limited%20services%20and%20species%20only%0D%0AHuman%20remains%20(cremated)%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20declared%20as%20cremated%20remains%3B%20inner%2Fouter%20container%20requirements%20apply%0D%0ACash%20%2F%20currency%20(international)%2Cprohibited%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CProhibited%20in%20international%20shipments%0D%0APerishables%2Crestricted%2CUPS%2CUnited%20Parcel%20Service%2Cexpress%2CUS%2CRestricted%3A%20insulated%2Ftemperature-control%20packaging%20required%3B%20transit%20time%20not%20guaranteed%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20ammunition%2Crestricted%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CRestricted%3A%20FedEx%20Firearms%20Program%20required%3B%20adult%20signature%3B%20FFL%20for%20handguns%0D%0ALive%20animals%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%3A%20FedEx%20Express%20does%20not%20accept%20live%20animals%20(very%20limited%20Ground%20exceptions)%0D%0AAlcohol%20%2F%20wine%20%2F%20spirits%2Crestricted%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CRestricted%3A%20licensed%20shipper%20agreement%20required%3B%20domestic%20US%20only%20for%20most%20services%0D%0ATobacco%20%2F%20cigarettes%2Crestricted%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CRestricted%3A%20PACT%20Act%20compliance%3B%20no%20consumer%20delivery%0D%0ACannabis%20%2F%20marijuana%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%3A%20federal%20law%0D%0AFresh%20perishables%2Crestricted%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CRestricted%3A%20FedEx%20Custom%20Critical%20or%20insulated%20cold%20pack%20required%3B%20no%20standard-service%20guarantee%0D%0AHuman%20remains%20(cremated)%2Crestricted%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CRestricted%3A%20declared%20as%20cremated%20remains%3B%20special%20packaging%20and%20adult%20signature%20required%0D%0ACash%20%2F%20currency%20(international)%2Cprohibited%2CFedEx%2CFedEx%20Corporation%2Cexpress%2CUS%2CProhibited%20in%20international%20shipments%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%20internationally%3B%20domestic%20acceptance%20extremely%20limited%0D%0AAlcohol%20%2F%20wine%20%2F%20spirits%2Crestricted%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CRestricted%3A%20country-specific%20rules%3B%20licensed%20importer%2Fexporter%20required%3B%20many%20destinations%20prohibited%0D%0ACannabis%20%2F%20marijuana%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%3A%20illegal%20under%20most%20national%20laws%0D%0ATobacco%20%2F%20cigarettes%2Crestricted%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CRestricted%3A%20licensing%20and%20import%20permit%20required%3B%20destination-specific%20rules%20apply%0D%0ACash%20%2F%20currency%2Cprohibited%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CProhibited%0D%0APerishables%2Crestricted%2CDHL%20Express%2CDHL%20Express%2Cexpress%2CGermany%2CRestricted%3A%20adequate%20packaging%20required%3B%20transit%20time%20not%20guaranteed%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CSurface%20mail%20only%20domestically%20%E2%80%94%20prohibited%20in%20air%3B%20IATA%20restrictions%20for%20international%20mail%0D%0APerfume%20%2F%20cologne%2Chazmat%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CFlammable%20%E2%80%94%20surface%20mail%20only%20domestic%3B%20air%20mail%20prohibited%20for%20most%20international%20destinations%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CSurface%20mail%20only%3B%20prohibited%20in%20air%20mail%3B%20strict%20quantity%20limits%0D%0ADry%20ice%2Chazmat%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CRestricted%3A%20surface%20mail%20only%3B%20max%202.27%20kg%20(5%20lb)%20per%20package%3B%20vent%20holes%20and%20labeling%20required%0D%0AFirearms%20%2F%20handguns%2Crestricted%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CRestricted%3A%20handguns%20to%2Ffrom%20licensed%20dealers%20(FFL)%20only%3B%20adult%20signature%20required%0D%0ALong%20guns%20(rifles%20%2F%20shotguns)%2Crestricted%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CRestricted%3A%20legal%20recipient%20only%3B%20adult%20signature%20required%0D%0AAlcohol%20%2F%20wine%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20domestically%20(rare%20state%20permit%20exceptions)%3B%20prohibited%20in%20international%20mail%0D%0ATobacco%20%2F%20cigarettes%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%3A%20PACT%20Act%20bans%20USPS%20delivery%20of%20cigarettes%2Fsmokeless%20tobacco%20to%20consumers%0D%0ACannabis%20%2F%20marijuana%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%3A%20federal%20law%0D%0ALive%20animals%2Crestricted%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2C%22Restricted%3A%20limited%20to%20day-old%20poultry%2C%20adult%20birds%2C%20invertebrates%20%E2%80%94%20carrier%20approval%20required%22%0D%0ACash%20%2F%20currency%20(international)%2Cprohibited%2CUSPS%2CUS%20Postal%20Service%2Cpostal%2CUS%2CProhibited%20in%20international%20mail%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Crestricted%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CRestricted%3A%20Canadian%20Firearms%20Act%20compliance%3B%20registration%20certificate%20and%20mailing%20permit%20required%0D%0AAlcohol%20%2F%20wine%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20domestically%20except%20via%20licensed%20provincial%20liquor%20board%20channels%3B%20internationally%20prohibited%20to%20most%20countries%0D%0ACannabis%2Crestricted%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20in%20international%20mail%3B%20domestic%20allowed%20only%20for%20licensed%20Cannabis%20Act%20retailers%20to%20adults%0D%0ATobacco%20%2F%20cigarettes%2Crestricted%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CRestricted%3A%20duty%2Fexcise%20tax%20compliance%20required%3B%20destination-specific%20restrictions%20apply%0D%0ACash%20%2F%20currency%2Cprohibited%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CProhibited%20in%20international%20mail%0D%0ALive%20animals%2Crestricted%2CCanada%20Post%2CCanada%20Post%20%2F%20Postes%20Canada%2Cpostal%2CCanada%2CRestricted%3A%20limited%20species%20only%3B%20carrier%20approval%20required%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20in%20air%20mail%20%E2%80%94%20surface%20mail%20only%20with%20IATA-compliant%20packaging%0D%0AAerosols%20%2F%20pressurized%20items%2Chazmat%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20in%20air%20mail%3B%20surface%20mail%20only%20with%20strict%20quantity%20limits%0D%0APerfume%20%2F%20cologne%2Chazmat%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20in%20air%20mail%20(Class%203%20flammable)%3B%20surface%20mail%20allowed%20within%20limits%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%0D%0AAlcohol%20%2F%20wine%2Crestricted%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CRestricted%3A%20country-specific%20rules%3B%20import%20duty%20and%20licensing%20compliance%20required%0D%0ACannabis%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%0D%0ATobacco%2Crestricted%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CRestricted%3A%20import%20duties%20and%20destination%20compliance%20required%0D%0ACash%20%2F%20currency%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%20in%20international%20mail%0D%0ALive%20animals%2Cprohibited%2CRoyal%20Mail%2CRoyal%20Mail%20Group%2Cpostal%2CUK%2CProhibited%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%20internationally%3B%20extremely%20limited%20domestic%20acceptance%0D%0AAlcohol%20%2F%20wine%20%2F%20spirits%2Crestricted%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CRestricted%3A%20country-specific%20licensing%20and%20import%20permits%20required%0D%0ACannabis%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%0D%0ACash%20%2F%20currency%2Cprohibited%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CProhibited%0D%0ATobacco%2Crestricted%2CTNT%2CTNT%20(FedEx%20subsidiary)%2Cexpress%2CNetherlands%2CRestricted%3A%20import%20compliance%20and%20licensing%20required%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Crestricted%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CRestricted%3A%20must%20comply%20with%20Canadian%20Firearms%20Act%3B%20carrier%20approval%20required%0D%0AAlcohol%20%2F%20wine%2Crestricted%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CRestricted%3A%20provincial%20regulations%20apply%3B%20licensed%20shipper%20agreement%20required%0D%0ACannabis%2Crestricted%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CRestricted%3A%20domestic%20only%3B%20licensed%20Cannabis%20Act%20retailer%20required%0D%0ACash%20%2F%20currency%2Cprohibited%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CProhibited%0D%0ATobacco%2Crestricted%2CPurolator%2CPurolator%20Inc.%2Cexpress%2CCanada%2CRestricted%3A%20excise%20compliance%20required%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20in%20ShipBob%20warehouses%0D%0AAlcohol%20%2F%20wine%2Crestricted%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CRestricted%3A%20state%20licensing%20required%3B%20limited%20to%20select%20warehouse%20locations%0D%0ACannabis%20%2F%20marijuana%2Cprohibited%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CProhibited%20(cannabis)%3B%20CBD%20products%20require%20compliance%20review%20and%20pre-approval%0D%0ATobacco%20%2F%20vaping%20products%2Crestricted%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CRestricted%3A%20PACT%20Act%20compliance%20and%20age%20verification%20required%0D%0AHazardous%20materials%2Crestricted%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CRestricted%3A%20limited%20acceptance%3B%20carrier%20and%20warehouse%20pre-approval%20required%0D%0ALithium%20batteries%20(loose)%2Crestricted%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CRestricted%3A%20carrier-dependent%20DG%20compliance%20required%3B%20pre-approval%20needed%0D%0APerishables%2Crestricted%2CShipBob%2CShipBob%20Inc.%2C3pl%2CUS%2CRestricted%3A%20cold%20chain%20warehouses%20only%3B%20limited%20availability%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Crestricted%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CRestricted%3A%20ITAR%2FEAR%20export%20license%20required%3B%20strict%20compliance%20documentation%0D%0AAlcohol%20%2F%20wine%2Crestricted%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CRestricted%3A%20import%2Fexport%20licensing%20required%3B%20destination-specific%20rules%0D%0ACannabis%2Cprohibited%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CProhibited%20internationally%0D%0APharmaceuticals%2Crestricted%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CRestricted%3A%20FDA%2Fimport%20compliance%20required%3B%20prescription%20drugs%20need%20prior%20approval%0D%0AFood%20items%2Crestricted%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CRestricted%3A%20FDA%20Prior%20Notice%20required%20for%20US%20imports%3B%20country-specific%20import%20rules%20apply%0D%0ADual-use%20goods%2Crestricted%2CFlexport%2CFlexport%20Inc.%2C3pl%2CUS%2CRestricted%3A%20Export%20Administration%20Regulations%20(EAR)%20compliance%20and%20licensing%20may%20be%20required%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%20across%20all%20connected%20carriers%0D%0ALithium%20batteries%20(loose)%2Crestricted%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CRestricted%3A%20carrier-dependent%3B%20some%20carriers%20require%20pre-approval%20for%20standalone%20batteries%0D%0APerfume%20%2F%20cologne%2Chazmat%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CHazmat%3A%20many%20connected%20carriers%20prohibit%20or%20severely%20limit%20via%20air%0D%0AAlcohol%2Crestricted%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CRestricted%3A%20carrier%20and%20destination-dependent%3B%20licensing%20often%20required%0D%0ACannabis%2Cprohibited%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CProhibited%0D%0ATobacco%20%2F%20vaping%2Crestricted%2CEasyship%2CEasyship%2C3pl%2CHong%20Kong%2CRestricted%3A%20carrier%20and%20destination%20rules%20apply%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20on%20standard%20Shippo%20carrier%20integrations%0D%0ALithium%20batteries%20(loose)%2Crestricted%2CShippo%2CShippo%2C3pl%2CUS%2CInherits%20carrier%20restrictions%20%E2%80%94%20most%20carriers%20require%20DG%20compliance%20documentation%0D%0AHazardous%20materials%2Crestricted%2CShippo%2CShippo%2C3pl%2CUS%2CInherits%20carrier%20restrictions%20%E2%80%94%20most%20restrict%20or%20prohibit%20hazmat%20shipments%0D%0AAlcohol%20%2F%20cannabis%2Cprohibited%2CShippo%2CShippo%2C3pl%2CUS%2CProhibited%20or%20requires%20licensed%20carrier%20agreement%20beyond%20standard%20Shippo%20access%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20on%20standard%20ShipStation%20carrier%20integrations%0D%0ALithium%20batteries%20(loose)%2Crestricted%2CShipStation%2CShipStation%2C3pl%2CUS%2CInherits%20from%20connected%20carrier%20%E2%80%94%20IATA%2FDOT%20DG%20rules%20apply%0D%0AHazardous%20materials%2Crestricted%2CShipStation%2CShipStation%2C3pl%2CUS%2CInherits%20from%20connected%20carrier%20%E2%80%94%20most%20require%20DG%2Fhazmat%20approval%0D%0AAlcohol%20%2F%20cannabis%2Cprohibited%2CShipStation%2CShipStation%2C3pl%2CUS%2CProhibited%20or%20requires%20licensed%20shipper%20agreement%20via%20connected%20carrier%0D%0AExplosives%20%2F%20fireworks%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%20%E2%80%94%20commercial%20carriers%20do%20not%20accept%20explosive%20materials%0D%0AIllegal%20drugs%20%2F%20narcotics%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%20by%20federal%20and%20international%20law%0D%0AChemical%20%2F%20biological%20weapons%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%20by%20law%0D%0ARadioactive%20materials%20(Class%207)%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%20except%20NRC%2FIAEA-licensed%20shippers%20with%20prior%20carrier%20approval%0D%0ALithium%20batteries%20(loose%2Fstandalone)%2Chazmat%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2C%22IATA%2FDOT%20regulated%20%E2%80%94%20PI%20965%E2%80%93970%3B%20Wh%20limits%2C%20special%20packaging%20%26%20labeling%22%0D%0AAerosols%20(pressurized%20cans)%2Chazmat%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2C%22Class%202.1%2F2.2%20hazmat%20%E2%80%94%20quantity%20limits%2C%20hazmat%20labeling%20required%22%0D%0APerfume%20%2F%20cologne%2Chazmat%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CClass%203%20flammable%20liquid%20%E2%80%94%20UN%203175%20%2F%20ORM-D%3B%20hazmat%20labeling%20required%0D%0ADry%20ice%2Chazmat%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2C%22UN%201845%20(CO%E2%82%82)%20%E2%80%94%20weight%20limits%2C%20ventilation%20holes%2C%20special%20labeling%22%0D%0AFirearms%20%2F%20weapons%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%0D%0AAlcohol%20%2F%20cannabis%2Cprohibited%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CProhibited%20in%20cross-border%20ecommerce%20services%0D%0ATobacco%2Crestricted%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CRestricted%3A%20licensing%20and%20age%20verification%20required%0D%0APharmaceuticals%2Crestricted%2CPitney%20Bowes%2CPitney%20Bowes%20Global%20Shipping%2C3pl%2CUS%2CRestricted%3A%20FDA%2Fimport%20compliance%20and%20pre-approval%20required%20for%20most%20destinations" download="carrier-restrictions-by-product-2026-03-09.csv">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </a>
+    </div>
+    <div class="product-list" id="product-list">
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Explosives / fireworks</div>
+        <div class="pm">14 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">14 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Illegal drugs / narcotics</div>
+        <div class="pm">14 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">14 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited by federal and international law</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Chemical / biological weapons</div>
+        <div class="pm">14 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">14 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited by law</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Radioactive materials (Class 7)</div>
+        <div class="pm">14 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">14 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Firearms / weapons</div>
+        <div class="pm">11 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">8 Prohibited</span><span class="sp sp-r">3 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited internationally; domestic acceptance extremely limited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Restricted: Canadian Firearms Act compliance; registration certificate and mailing permit required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited internationally; extremely limited domestic acceptance</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Restricted: must comply with Canadian Firearms Act; carrier approval required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited in ShipBob warehouses</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Restricted: ITAR/EAR export license required; strict compliance documentation</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited across all connected carriers</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited on standard Shippo carrier integrations</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited on standard ShipStation carrier integrations</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Alcohol / wine</div>
+        <div class="pm">6 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">2 Prohibited</span><span class="sp sp-r">4 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited domestically (rare state permit exceptions); prohibited in international mail</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited domestically except via licensed provincial liquor board channels; internationally prohibited to most countries</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Restricted: country-specific rules; import duty and licensing compliance required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Restricted: provincial regulations apply; licensed shipper agreement required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Restricted: state licensing required; limited to select warehouse locations</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Restricted: import/export licensing required; destination-specific rules</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Cannabis</div>
+        <div class="pm">6 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">4 Prohibited</span><span class="sp sp-r">2 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited in international mail; domestic allowed only for licensed Cannabis Act retailers to adults</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Restricted: domestic only; licensed Cannabis Act retailer required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Prohibited internationally</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Prohibited</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Tobacco / cigarettes</div>
+        <div class="pm">5 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">1 Prohibited</span><span class="sp sp-r">4 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: PACT Act compliance required; no consumer delivery in most states</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Restricted: PACT Act compliance; no consumer delivery</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Restricted: licensing and import permit required; destination-specific rules apply</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited: PACT Act bans USPS delivery of cigarettes/smokeless tobacco to consumers</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Restricted: duty/excise tax compliance required; destination-specific restrictions apply</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Cannabis / marijuana</div>
+        <div class="pm">5 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">5 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited: illegal under US federal law and internationally</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited: federal law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited: illegal under most national laws</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited: federal law</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Prohibited (cannabis); CBD products require compliance review and pre-approval</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Live animals</div>
+        <div class="pm">5 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">2 Prohibited</span><span class="sp sp-r">3 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: carrier approval required; limited services and species only</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited: FedEx Express does not accept live animals (very limited Ground exceptions)</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Restricted: limited to day-old poultry, adult birds, invertebrates — carrier approval required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Restricted: limited species only; carrier approval required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Cash / currency</div>
+        <div class="pm">5 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">5 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Prohibited in international mail</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited in international mail</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Prohibited</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Cash / currency (international)</div>
+        <div class="pm">3 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">3 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Prohibited in international shipments</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Prohibited in international shipments</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Prohibited in international mail</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="prohibited">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Alcohol / cannabis</div>
+        <div class="pm">3 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-p">3 Prohibited</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Prohibited or requires licensed carrier agreement beyond standard Shippo access</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Prohibited or requires licensed shipper agreement via connected carrier</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dp"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Prohibited in cross-border ecommerce services</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="hazmat">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Perfume / cologne</div>
+        <div class="pm">11 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-h">11 Hazmat</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Flammable — surface mail only domestic; air mail prohibited for most international destinations</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited in air mail (Class 3 flammable); surface mail allowed within limits</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Hazmat: many connected carriers prohibit or severely limit via air</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="hazmat">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Lithium batteries (loose/standalone)</div>
+        <div class="pm">10 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-h">10 Hazmat</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Surface mail only domestically — prohibited in air; IATA restrictions for international mail</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited in air mail — surface mail only with IATA-compliant packaging</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="hazmat">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Aerosols (pressurized cans)</div>
+        <div class="pm">9 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-h">9 Hazmat</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Surface mail only; prohibited in air mail; strict quantity limits</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="hazmat">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Dry ice</div>
+        <div class="pm">9 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-h">9 Hazmat</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Restricted: surface mail only; max 2.27 kg (5 lb) per package; vent holes and labeling required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Canada Post</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="hazmat">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Aerosols / pressurized items</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-h">1 Hazmat</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dh"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Prohibited in air mail; surface mail only with strict quantity limits</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Alcohol / wine / spirits</div>
+        <div class="pm">4 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">4 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: UPS licensed shipper agreement required; state-to-state rules vary</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Restricted: licensed shipper agreement required; domestic US only for most services</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Restricted: country-specific rules; licensed importer/exporter required; many destinations prohibited</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Restricted: country-specific licensing and import permits required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Tobacco</div>
+        <div class="pm">4 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">4 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Royal Mail</span>
+          <span class="cr-reason">Restricted: import duties and destination compliance required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">TNT</span>
+          <span class="cr-reason">Restricted: import compliance and licensing required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Purolator</span>
+          <span class="cr-reason">Restricted: excise compliance required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Restricted: licensing and age verification required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Lithium batteries (loose)</div>
+        <div class="pm">4 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">4 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Restricted: carrier-dependent DG compliance required; pre-approval needed</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Restricted: carrier-dependent; some carriers require pre-approval for standalone batteries</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Inherits carrier restrictions — most carriers require DG compliance documentation</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Inherits from connected carrier — IATA/DOT DG rules apply</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Perishables</div>
+        <div class="pm">3 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">3 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: insulated/temperature-control packaging required; transit time not guaranteed</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">DHL Express</span>
+          <span class="cr-reason">Restricted: adequate packaging required; transit time not guaranteed</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Restricted: cold chain warehouses only; limited availability</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Hazardous materials</div>
+        <div class="pm">3 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">3 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Restricted: limited acceptance; carrier and warehouse pre-approval required</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Shippo</span>
+          <span class="cr-reason">Inherits carrier restrictions — most restrict or prohibit hazmat shipments</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipStation</span>
+          <span class="cr-reason">Inherits from connected carrier — most require DG/hazmat approval</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Firearms / ammunition</div>
+        <div class="pm">2 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">2 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: UPS Firearms Program enrollment required; adult signature; FFL for handguns</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Restricted: FedEx Firearms Program required; adult signature; FFL for handguns</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Human remains (cremated)</div>
+        <div class="pm">2 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">2 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">UPS</span>
+          <span class="cr-reason">Restricted: declared as cremated remains; inner/outer container requirements apply</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Restricted: declared as cremated remains; special packaging and adult signature required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Pharmaceuticals</div>
+        <div class="pm">2 carriers with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">2 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Restricted: FDA/import compliance required; prescription drugs need prior approval</span>
+        </div>
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Pitney Bowes</span>
+          <span class="cr-reason">Restricted: FDA/import compliance and pre-approval required for most destinations</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Fresh perishables</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">FedEx</span>
+          <span class="cr-reason">Restricted: FedEx Custom Critical or insulated cold pack required; no standard-service guarantee</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Firearms / handguns</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Restricted: handguns to/from licensed dealers (FFL) only; adult signature required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Long guns (rifles / shotguns)</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">USPS</span>
+          <span class="cr-reason">Restricted: legal recipient only; adult signature required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Tobacco / vaping products</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">ShipBob</span>
+          <span class="cr-reason">Restricted: PACT Act compliance and age verification required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Food items</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Restricted: FDA Prior Notice required for US imports; country-specific import rules apply</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Dual-use goods</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Flexport</span>
+          <span class="cr-reason">Restricted: Export Administration Regulations (EAR) compliance and licensing may be required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Alcohol</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Restricted: carrier and destination-dependent; licensing often required</span>
+        </div></div>
+  </div>
+
+  <div class="prow" data-ptypes="restricted">
+    <div class="prow-hd" onclick="toggleProduct(this)">
+      <div>
+        <div class="pn">Tobacco / vaping</div>
+        <div class="pm">1 carrier with restrictions</div>
+      </div>
+      <div class="spills"><span class="sp sp-r">1 Restricted</span></div>
+      <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="prow-bd">
+        <div class="cr-row">
+          <span class="dot dr"></span>
+          <span class="cr-name">Easyship</span>
+          <span class="cr-reason">Restricted: carrier and destination rules apply</span>
+        </div></div>
+  </div>
+    </div>
+    <div class="empty hidden" id="product-empty"><strong>No products match your filters.</strong>Try broadening your search.</div>
+  </div>
 </main>
 
 <footer>
-  Generated Mar 9, 2026, 9:00 AM &nbsp;&bull;&nbsp;
+  Generated Mar 9, 2026, 9:54 AM &nbsp;&bull;&nbsp;
   Data sourced from official carrier service pages. Verify at carrier links before making shipping decisions.
   <br>Sanctions based on OFAC, EU, UN, and national lists current at scan time.
 </footer>
@@ -5078,14 +6416,19 @@ footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem;
 var currentView = "carrier";
 var typeFilter  = "all";
 var catFilter   = "all";
+var ptypeFilter = "all";
 var searchQuery = "";
 
 function switchView(v) {
   currentView = v;
   document.getElementById("view-carrier").style.display = v === "carrier" ? "" : "none";
   document.getElementById("view-country").style.display = v === "country" ? "" : "none";
+  document.getElementById("view-product").style.display = v === "product" ? "" : "none";
   document.getElementById("btn-carrier").classList.toggle("active", v === "carrier");
   document.getElementById("btn-country").classList.toggle("active", v === "country");
+  document.getElementById("btn-product").classList.toggle("active", v === "product");
+  document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
+  document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
   applyFilters();
 }
 
@@ -5098,6 +6441,13 @@ function toggleMore(btn, extra) {
 }
 
 function toggleCountry(hd) {
+  var body = hd.nextElementSibling;
+  var chev = hd.querySelector(".chev");
+  body.classList.toggle("open");
+  chev.classList.toggle("open");
+}
+
+function toggleProduct(hd) {
   var body = hd.nextElementSibling;
   var chev = hd.querySelector(".chev");
   body.classList.toggle("open");
@@ -5143,7 +6493,7 @@ function applyFilters() {
     document.getElementById("carrier-empty").classList.toggle("hidden", visible > 0);
     document.getElementById("carrier-grid").style.display = visible > 0 ? "" : "none";
 
-  } else {
+  } else if (currentView === "country") {
     var rows = document.querySelectorAll(".crow");
     var visible2 = 0;
     rows.forEach(function(row) {
@@ -5157,6 +6507,20 @@ function applyFilters() {
     });
     document.getElementById("country-empty").classList.toggle("hidden", visible2 > 0);
     document.getElementById("country-list").style.display = visible2 > 0 ? "" : "none";
+
+  } else {
+    var prows = document.querySelectorAll(".prow");
+    var visible3 = 0;
+    prows.forEach(function(row) {
+      var ptypeOk  = ptypeFilter === "all" || row.dataset.ptypes.indexOf(ptypeFilter) !== -1;
+      var text     = row.textContent.toLowerCase();
+      var searchOk = !q || text.includes(q);
+      var show = ptypeOk && searchOk;
+      row.classList.toggle("hidden", !show);
+      if (show) visible3++;
+    });
+    document.getElementById("product-empty").classList.toggle("hidden", visible3 > 0);
+    document.getElementById("product-list").style.display = visible3 > 0 ? "" : "none";
   }
 }
 
@@ -5191,6 +6555,15 @@ document.querySelectorAll("[data-cat]").forEach(function(btn) {
   btn.addEventListener("click", function() {
     catFilter = btn.dataset.cat;
     document.querySelectorAll("[data-cat]").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    applyFilters();
+  });
+});
+
+document.querySelectorAll("[data-ptype]").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    ptypeFilter = btn.dataset.ptype;
+    document.querySelectorAll("[data-ptype]").forEach(function(b) { b.classList.remove("active"); });
     btn.classList.add("active");
     applyFilters();
   });
