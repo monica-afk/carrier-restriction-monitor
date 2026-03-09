@@ -780,16 +780,16 @@ function genStats(carriers) {
   }));
 
   return `
-    <div class="stat"><div class="stat-value">${carriers.length}</div><div class="stat-label">Carriers Tracked</div></div>
-    <div class="stat"><div class="stat-value">${countries.size}</div><div class="stat-label">Countries Flagged</div></div>
-    <div class="stat"><div class="stat-value red">${ns}</div><div class="stat-label">Sanctions Entries</div></div>
-    <div class="stat"><div class="stat-value orange">${nx}</div><div class="stat-label">Suspended Entries</div></div>
-    <div class="stat"><div class="stat-value amber">${nl}</div><div class="stat-label">Limited Entries</div></div>
-    <div class="stat-div"></div>
-    <div class="stat"><div class="stat-value">${products.size}</div><div class="stat-label">Products Flagged</div></div>
-    <div class="stat"><div class="stat-value red">${np}</div><div class="stat-label">Prohibited Items</div></div>
-    <div class="stat"><div class="stat-value orange">${nh}</div><div class="stat-label">Hazmat Items</div></div>
-    <div class="stat"><div class="stat-value amber">${nr}</div><div class="stat-label">Restricted Items</div></div>`;
+    <div class="stat-chip"><span class="sc-val">${carriers.length}</span><span class="sc-lbl">Carriers</span></div>
+    <div class="stat-chip"><span class="sc-val">${countries.size}</span><span class="sc-lbl">Countries</span></div>
+    <div class="stat-chip"><span class="sc-val red">${ns}</span><span class="sc-lbl">Sanctions</span></div>
+    <div class="stat-chip"><span class="sc-val orange">${nx}</span><span class="sc-lbl">Suspended</span></div>
+    <div class="stat-chip"><span class="sc-val amber">${nl}</span><span class="sc-lbl">Limited</span></div>
+    <div class="stat-chip-div"></div>
+    <div class="stat-chip"><span class="sc-val">${products.size}</span><span class="sc-lbl">Products</span></div>
+    <div class="stat-chip"><span class="sc-val red">${np}</span><span class="sc-lbl">Prohibited</span></div>
+    <div class="stat-chip"><span class="sc-val orange">${nh}</span><span class="sc-lbl">Hazmat</span></div>
+    <div class="stat-chip"><span class="sc-val amber">${nr}</span><span class="sc-lbl">Restricted</span></div>`;
 }
 
 function genCarrierCards(carriers) {
@@ -1063,86 +1063,115 @@ function generateDashboard() {
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f1f5f9; --card: #fff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b;
-  --header-bg: #0f172a; --accent: #6366f1;
+  --bg: #f1f5f9; --surface: #fff; --border: #e2e8f0; --border-sub: #f1f5f9;
+  --text: #0f172a; --text-2: #475569; --muted: #94a3b8;
+  --accent: #6366f1; --accent-h: #4f46e5;
   --san-bg: #fef2f2; --san-text: #991b1b; --san-dot: #dc2626;
   --sus-bg: #fff7ed; --sus-text: #9a3412; --sus-dot: #ea580c;
   --lim-bg: #fefce8; --lim-text: #92400e; --lim-dot: #ca8a04;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.06);
 }
 body.dark {
-  --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #f1f5f9; --muted: #94a3b8;
-  --header-bg: #020617;
+  --bg: #0d1117; --surface: #161b22; --border: #30363d; --border-sub: #21262d;
+  --text: #e6edf3; --text-2: #8b949e; --muted: #6e7681;
   --san-bg: #450a0a; --san-text: #fca5a5;
   --sus-bg: #431407; --sus-text: #fdba74;
   --lim-bg: #422006; --lim-text: #fcd34d;
 }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: background .2s, color .2s; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: background .2s, color .2s; line-height: 1.5; }
 
-header { background: var(--header-bg); color: #fff; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
-header .header-text h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-header .header-text p  { color: #94a3b8; font-size: 0.875rem; margin-top: 4px; }
-.dark-toggle { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; flex-shrink: 0; transition: background .15s; }
-.dark-toggle:hover { background: rgba(255,255,255,.2); }
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+header { background: linear-gradient(135deg, #0c1628 0%, #1a2c4e 100%); color: #fff; padding: 24px 32px 0; }
+.header-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 20px; }
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.header-icon { width: 42px; height: 42px; background: rgba(99,102,241,.2); border: 1px solid rgba(99,102,241,.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.header-brand h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; color: #f1f5f9; }
+.header-brand p { font-size: .8rem; color: #64748b; margin-top: 3px; }
+.dark-toggle { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #94a3b8; padding: 7px 11px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; flex-shrink: 0; transition: all .15s; }
+.dark-toggle:hover { background: rgba(255,255,255,.16); color: #fff; }
 
-.stats { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
-.stat  { flex: 1; min-width: 130px; background: var(--card); padding: 14px 20px; }
-.stat-value { font-size: 1.5rem; font-weight: 700; }
-.stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
-.red    { color: var(--san-dot); }
-.orange { color: var(--sus-dot); }
-.amber  { color: var(--lim-dot); }
+/* ── Header stats chips ──────────────────────────────────────────────────────── */
+.header-stats { display: flex; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,.07); margin: 0 -32px; padding: 0 32px; }
+.stat-chip { display: flex; flex-direction: column; padding: 10px 18px; border-right: 1px solid rgba(255,255,255,.07); }
+.stat-chip:last-child { border-right: none; }
+.sc-val { font-size: 1.25rem; font-weight: 700; color: #e2e8f0; line-height: 1; }
+.sc-val.red { color: #f87171; }
+.sc-val.orange { color: #fb923c; }
+.sc-val.amber { color: #fbbf24; }
+.sc-lbl { font-size: .62rem; text-transform: uppercase; letter-spacing: .07em; color: #4e6280; margin-top: 3px; }
+.stat-chip-div { width: 1px; background: rgba(255,255,255,.15); margin: 8px 12px; align-self: stretch; flex-shrink: 0; }
 
-.controls { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 360px; }
+/* ── Primary tab nav ─────────────────────────────────────────────────────────── */
+.tab-nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; padding: 0 24px; overflow-x: auto; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn { display: flex; align-items: center; gap: 8px; padding: 14px 20px; font-size: .875rem; font-weight: 500; color: var(--text-2); background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; transition: all .15s; margin-bottom: -1px; }
+.tab-btn:hover { color: var(--text); background: var(--bg); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn svg { flex-shrink: 0; opacity: .55; transition: opacity .15s; }
+.tab-btn.active svg { opacity: 1; }
+
+/* ── Filter bar ──────────────────────────────────────────────────────────────── */
+.filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; box-shadow: 0 1px 0 var(--border); }
+.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 300px; }
 .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-input[type=search] { width: 100%; padding: 8px 12px 8px 34px; border: 1px solid var(--border); border-radius: 8px; font-size: .875rem; background: var(--bg); }
-input[type=search]:focus { outline: 2px solid var(--accent); background: #fff; }
-
-.filter-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.filter-group label { font-size: .75rem; color: var(--muted); }
-.pill { padding: 5px 12px; border-radius: 999px; font-size: .8rem; border: 1px solid var(--border); background: var(--card); cursor: pointer; transition: all .12s; white-space: nowrap; }
-.pill:hover { border-color: var(--accent); }
+input[type=search] { width: 100%; padding: 7px 12px 7px 34px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .875rem; background: var(--bg); color: var(--text); transition: border .15s, box-shadow .15s; }
+input[type=search]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12); background: var(--surface); }
+.filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 2px 2px; flex-shrink: 0; }
+.filter-section { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.filter-label { font-size: .69rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; white-space: nowrap; }
+.pill { padding: 4px 11px; border-radius: 999px; font-size: .78rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all .12s; white-space: nowrap; }
+.pill:hover { border-color: var(--accent); color: var(--text); }
 .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.sub-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+.sub-btn { padding: 4px 13px; font-size: .78rem; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); border: none; border-right: 1px solid var(--border); transition: all .12s; white-space: nowrap; }
+.sub-btn:last-child { border-right: none; }
+.sub-btn.active { background: var(--accent); color: #fff; }
+.sub-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
 
-.view-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-left: auto; }
-.view-btn { padding: 6px 16px; font-size: .8rem; cursor: pointer; background: var(--card); border: none; border-right: 1px solid var(--border); }
-.view-btn:last-child { border-right: none; }
-.view-btn.active { background: var(--accent); color: #fff; }
-
+/* ── Main ────────────────────────────────────────────────────────────────────── */
 main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+.view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+.view-title { font-size: .8rem; color: var(--muted); font-weight: 500; }
+.csv-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: .78rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; text-decoration: none; cursor: pointer; transition: all .12s; flex-shrink: 0; }
+.csv-btn:hover { background: #bbf7d0; border-color: #4ade80; }
+body.dark .csv-btn { color: #4ade80; background: #052e16; border-color: #166534; }
 
+/* ── Carrier cards ───────────────────────────────────────────────────────────── */
 .carrier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-.carrier-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.carrier-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); transition: box-shadow .2s, transform .15s; }
+.carrier-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .carrier-card.hidden { display: none; }
 .card-header { padding: 16px 18px 12px; display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid var(--border); }
 .carrier-name { font-weight: 700; font-size: 1rem; }
-.carrier-full { font-size: .75rem; color: var(--muted); margin-top: 1px; }
-.badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.carrier-full { font-size: .74rem; color: var(--muted); margin-top: 2px; }
+.badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .67rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .badge-express   { background: #dbeafe; color: #1d4ed8; }
 .badge-postal    { background: #d1fae5; color: #065f46; }
 .badge-freight   { background: #f3e8ff; color: #6b21a8; }
 .badge-3pl       { background: #fce7f3; color: #9d174d; }
 .badge-ecommerce { background: #e0f2fe; color: #0369a1; }
-.badge-live  { background: #dcfce7; color: #166534; }
-.badge-known { background: #f1f5f9; color: #64748b; }
+.badge-live      { background: #dcfce7; color: #166534; }
+.badge-known     { background: var(--border); color: var(--muted); }
+body.dark .badge-express   { background: #1e3a5f; color: #93c5fd; }
+body.dark .badge-postal    { background: #052e16; color: #6ee7b7; }
+body.dark .badge-freight   { background: #2e1065; color: #d8b4fe; }
+body.dark .badge-3pl       { background: #500724; color: #f9a8d4; }
+body.dark .badge-ecommerce { background: #0c4a6e; color: #7dd3fc; }
 .hq { font-size: .72rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
-
 .card-body { padding: 12px 18px; flex: 1; }
-.rcount { font-size: .8rem; color: var(--muted); margin-bottom: 10px; }
+.rcount { font-size: .79rem; color: var(--muted); margin-bottom: 10px; }
 .rcount strong { color: var(--text); }
 .rlist { list-style: none; display: flex; flex-direction: column; gap: 5px; }
 .ritem { display: flex; align-items: flex-start; gap: 8px; font-size: .82rem; }
 .ritem.hidden { display: none !important; }
-.dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.ds { background: var(--san-dot); }
-.dx { background: var(--sus-dot); }
-.dl { background: var(--lim-dot); }
+.dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.ds { background: var(--san-dot); } .dx { background: var(--sus-dot); } .dl { background: var(--lim-dot); }
 .ri-c { font-weight: 500; }
-.ri-r { color: var(--muted); font-size: .77rem; }
-.more-btn { display: block; width: 100%; margin-top: 10px; padding: 6px; font-size: .78rem; color: var(--accent); background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+.ri-r { color: var(--muted); font-size: .76rem; }
+.more-btn { display: block; width: 100%; margin-top: 10px; padding: 6px; font-size: .78rem; color: var(--accent); background: transparent; border: 1px solid var(--border); border-radius: 7px; cursor: pointer; transition: background .12s; }
 .more-btn:hover { background: var(--bg); }
-
 .card-footer { padding: 10px 18px 12px; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .card-note { font-size: .72rem; color: var(--muted); font-style: italic; flex: 1; padding-top: 2px; }
 .src-block { text-align: right; }
@@ -1150,107 +1179,122 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 .src-link { font-size: .78rem; color: var(--accent); text-decoration: none; font-weight: 500; display: block; }
 .src-link:hover { text-decoration: underline; }
 .src-url { font-size: .65rem; color: var(--muted); word-break: break-all; margin-top: 2px; }
+.card-csv { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: .72rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; padding: 3px 9px; text-decoration: none; }
+.card-csv:hover { background: #bbf7d0; }
+body.dark .card-csv { color: #4ade80; background: #052e16; border-color: #166534; }
 
-.country-list { display: flex; flex-direction: column; gap: 10px; }
-.crow { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.crow.hidden { display: none; }
-.crow-hd { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-.crow-hd:hover { background: var(--bg); }
-.cn { font-weight: 700; font-size: 1rem; }
-.cm { font-size: .8rem; color: var(--muted); }
+/* ── Country / Product accordion rows ───────────────────────────────────────── */
+.country-list, .product-list { display: flex; flex-direction: column; gap: 8px; }
+.crow, .prow { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow .15s; }
+.crow:hover, .prow:hover { box-shadow: var(--shadow-md); }
+.crow.hidden, .prow.hidden { display: none; }
+.crow-hd, .prow-hd { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: background .1s; }
+.crow-hd:hover, .prow-hd:hover { background: var(--bg); }
+.cn, .pn { font-weight: 700; font-size: .95rem; }
+.cm, .pm { font-size: .79rem; color: var(--muted); margin-top: 1px; }
 .chev { margin-left: auto; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
 .chev.open { transform: rotate(180deg); }
-.spills { display: flex; gap: 6px; flex-wrap: wrap; }
-.sp { padding: 2px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.spills { display: flex; gap: 5px; flex-wrap: wrap; }
+.sp { padding: 2px 9px; border-radius: 999px; font-size: .7rem; font-weight: 600; }
 .sp-s { background: var(--san-bg); color: var(--san-text); }
 .sp-x { background: var(--sus-bg); color: var(--sus-text); }
 .sp-l { background: var(--lim-bg); color: var(--lim-text); }
-.crow-bd { display: none; padding: 0 18px 14px; }
-.crow-bd.open { display: block; }
-.cr-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: .83rem; }
+.sp-p { background: var(--san-bg); color: var(--san-text); }
+.sp-h { background: var(--sus-bg); color: var(--sus-text); }
+.sp-r { background: #f5f3ff; color: #5b21b6; }
+body.dark .sp-r { background: #2e1065; color: #c4b5fd; }
+.crow-bd, .prow-bd { display: none; padding: 0 18px 14px; border-top: 1px solid var(--border-sub); }
+.crow-bd.open, .prow-bd.open { display: block; }
+.cr-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border-sub); font-size: .83rem; }
 .cr-row:last-child { border-bottom: none; }
 .cr-name { font-weight: 600; min-width: 120px; }
 .cr-reason { color: var(--muted); flex: 1; }
 .cr-src { margin-left: auto; flex-shrink: 0; font-size: .72rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
 .cr-src:hover { text-decoration: underline; }
 
-.empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-.empty strong { display: block; font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
-
-.view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.view-title { font-size: .8rem; color: var(--muted); font-weight: 500; }
-.csv-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: .78rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; text-decoration: none; cursor: pointer; transition: all .12s; }
-.csv-btn:hover { background: #bbf7d0; border-color: #4ade80; }
-.card-csv { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: .72rem; font-weight: 500; color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; padding: 3px 9px; text-decoration: none; }
-.card-csv:hover { background: #bbf7d0; }
-.dark .card-csv { color: #4ade80; background: #052e16; border-color: #166534; }
-.dark .card-csv:hover { background: #14532d; }
-
-footer { margin-top: 40px; padding: 24px; text-align: center; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); }
-
-/* ── Product view ──────────────────────────────────────────────────────────── */
+/* ── Product dots ────────────────────────────────────────────────────────────── */
 .dp { background: var(--san-dot); }
 .dh { background: var(--sus-dot); }
 .dr { background: #7c3aed; }
-.sp-p { background: var(--san-bg); color: var(--san-text); }
-.sp-h { background: var(--sus-bg); color: var(--sus-text); }
-.sp-r { background: #f5f3ff; color: #5b21b6; }
-body.dark .sp-r { background: #2e1065; color: #c4b5fd; }
-.product-list { display: flex; flex-direction: column; gap: 10px; }
-.prow { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.prow.hidden { display: none; }
-.prow-hd { padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-.prow-hd:hover { background: var(--bg); }
-.pn { font-weight: 700; font-size: 1rem; }
-.pm { font-size: .8rem; color: var(--muted); }
-.prow-bd { display: none; padding: 0 18px 14px; }
-.prow-bd.open { display: block; }
-.stat-div { width: 1px; background: var(--border); margin: 8px 0; align-self: stretch; flex-shrink: 0; }
 
-@media (max-width: 600px) {
-  header { padding: 18px 16px; }
+/* ── Empty state ─────────────────────────────────────────────────────────────── */
+.empty { text-align: center; padding: 64px 20px; color: var(--muted); }
+.empty strong { display: block; font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); }
+
+/* ── Text colors ─────────────────────────────────────────────────────────────── */
+.red    { color: var(--san-dot); }
+.orange { color: var(--sus-dot); }
+.amber  { color: var(--lim-dot); }
+
+@media (max-width: 768px) {
+  header { padding: 20px 16px 0; }
+  .header-stats { margin: 0 -16px; padding: 0 16px; }
+  .tab-nav, .filter-bar { padding-left: 16px; padding-right: 16px; }
   main { padding: 16px; }
-  .controls { padding: 12px 16px; }
   .carrier-grid { grid-template-columns: 1fr; }
-  .stat-div { display: none; }
+  .view-header { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-text">
-    <h1>Carrier Restriction Monitor</h1>
-    <p>Countries major carriers and 3PLs are NOT shipping to &mdash; refreshed daily</p>
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="header-icon">🌐</div>
+      <div>
+        <h1>Carrier Restriction Monitor</h1>
+        <p>Shipping restrictions across ${CARRIERS.length} carriers &mdash; updated ${genAt}</p>
+      </div>
+    </div>
+    <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode">🌙</button>
   </div>
-  <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode">🌙</button>
+  <div class="header-stats">
+    ${statsHtml}
+  </div>
 </header>
 
-<div class="stats">
-  ${statsHtml}
-</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" id="btn-carrier" onclick="switchView('carrier')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    Country Restrictions
+  </button>
+  <button class="tab-btn" id="btn-country" onclick="switchView('country')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    By Country
+  </button>
+  <button class="tab-btn" id="btn-product" onclick="switchView('product')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    Product Restrictions
+  </button>
+</nav>
 
-<div class="controls">
+<div class="filter-bar">
   <div class="search-wrap">
     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="search" id="search" placeholder="Search carrier or country..." autocomplete="off">
+    <input type="search" id="search" placeholder="Search carrier, country or product..." autocomplete="off">
   </div>
-  <div class="filter-group" id="type-filter-main">
-    <label>Type</label>
+  <div class="filter-sep"></div>
+  <div class="filter-section" id="type-filter-main">
+    <span class="filter-label">Type</span>
     <button class="pill active" data-type="all">All</button>
     <button class="pill" data-type="sanctions">Sanctions</button>
     <button class="pill" data-type="suspended">Suspended</button>
     <button class="pill" data-type="limited">Limited</button>
   </div>
-  <div class="filter-group" id="type-filter-product" style="display:none">
-    <label>Type</label>
+  <div class="filter-section" id="type-filter-product" style="display:none">
+    <span class="filter-label">Type</span>
     <button class="pill active" data-ptype="all">All</button>
     <button class="pill" data-ptype="prohibited">Prohibited</button>
     <button class="pill" data-ptype="hazmat">Hazmat</button>
     <button class="pill" data-ptype="restricted">Restricted</button>
   </div>
-  <div class="filter-group">
-    <label>Category</label>
+  <div class="filter-sep"></div>
+  <div class="filter-section">
+    <span class="filter-label">Category</span>
     <button class="pill active" data-cat="all">All</button>
     <button class="pill" data-cat="express">Express</button>
     <button class="pill" data-cat="postal">Postal</button>
@@ -1258,10 +1302,13 @@ body.dark .sp-r { background: #2e1065; color: #c4b5fd; }
     <button class="pill" data-cat="3pl">3PL</button>
     <button class="pill" data-cat="ecommerce">eCommerce</button>
   </div>
-  <div class="view-toggle">
-    <button class="view-btn active" id="btn-carrier" onclick="switchView('carrier')">By Carrier</button>
-    <button class="view-btn" id="btn-country" onclick="switchView('country')">By Country</button>
-    <button class="view-btn" id="btn-product" onclick="switchView('product')">By Product</button>
+  <div class="filter-section" id="prod-sub-filter" style="display:none">
+    <div class="filter-sep"></div>
+    <span class="filter-label">View as</span>
+    <div class="sub-toggle">
+      <button class="sub-btn active" id="btn-prod-type" onclick="switchProductView('type')">By Product Type</button>
+      <button class="sub-btn" id="btn-prod-carrier" onclick="switchProductView('carrier')">By Carrier</button>
+    </div>
   </div>
 </div>
 
@@ -1295,16 +1342,10 @@ ${countryHtml}
   <div id="view-product" style="display:none">
     <div class="view-header">
       <span class="view-title" id="prod-view-title">Products carriers restrict or prohibit — sorted by severity, click to expand</span>
-      <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">
-        <div class="view-toggle">
-          <button class="view-btn active" id="btn-prod-type" onclick="switchProductView('type')">By Product Type</button>
-          <button class="view-btn" id="btn-prod-carrier" onclick="switchProductView('carrier')">By Carrier</button>
-        </div>
-        <a class="csv-btn" href="${productCsvUri}" download="carrier-restrictions-by-product-${dateStamp}.csv">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download CSV
-        </a>
-      </div>
+      <a class="csv-btn" href="${productCsvUri}" download="carrier-restrictions-by-product-${dateStamp}.csv">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </a>
     </div>
     <div id="prod-view-type">
       <div class="product-list" id="product-list">
@@ -1345,6 +1386,7 @@ function switchView(v) {
   document.getElementById("btn-product").classList.toggle("active", v === "product");
   document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
   document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
+  document.getElementById("prod-sub-filter").style.display     = v === "product" ? "" : "none";
   applyFilters();
 }
 
