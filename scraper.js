@@ -933,7 +933,7 @@ function genProductRows() {
       if ((sevOrder[pr.type] ?? 3) < (sevOrder[map[pr.product].topType] ?? 3)) {
         map[pr.product].topType = pr.type;
       }
-      map[pr.product].entries.push({ carrier: carrier.name, category: carrier.category, reason: pr.reason, type: pr.type });
+      map[pr.product].entries.push({ carrier: carrier.name, category: carrier.category, reason: pr.reason, type: pr.type, source_url: carrier.source_url });
     });
   });
 
@@ -961,6 +961,7 @@ function genProductRows() {
           ${prodDot(e.type)}
           <span class="cr-name">${esc(e.carrier)}</span>
           <span class="cr-reason">${esc(e.reason)}</span>
+          <a class="cr-src" href="${esc(e.source_url)}" target="_blank" rel="noopener">Source ↗</a>
         </div>`).join("");
 
     return `
@@ -978,6 +979,68 @@ function genProductRows() {
   }).join("\n");
 }
 
+function genProductCarrierCards() {
+  return CARRIERS
+    .filter(c => PRODUCT_RESTRICTIONS[c.id])
+    .map(c => {
+      const prods   = PRODUCT_RESTRICTIONS[c.id];
+      const preview = prods.slice(0, 6);
+      const hasMore = prods.length > 6;
+
+      const rows = preview.map(pr => `
+        <li class="ritem" data-ptype="${pr.type}">
+          ${prodDot(pr.type)}
+          <span><div class="ri-c">${esc(pr.product)}</div><div class="ri-r">${esc(pr.reason)}</div></span>
+        </li>`).join("");
+
+      const hiddenRows = hasMore ? prods.slice(6).map(pr => `
+        <li class="ritem ritem-hidden" data-ptype="${pr.type}" style="display:none">
+          ${prodDot(pr.type)}
+          <span><div class="ri-c">${esc(pr.product)}</div><div class="ri-r">${esc(pr.reason)}</div></span>
+        </li>`).join("") : "";
+
+      const moreBtn = hasMore
+        ? `<button class="more-btn" onclick="toggleMore(this, ${prods.length - 6})">Show ${prods.length - 6} more...</button>`
+        : "";
+
+      const sevMap = { prohibited: 0, hazmat: 0, restricted: 0 };
+      prods.forEach(pr => { if (pr.type in sevMap) sevMap[pr.type]++; });
+      const pills = [
+        sevMap.prohibited ? `<span class="sp sp-p">${sevMap.prohibited} Prohibited</span>` : "",
+        sevMap.hazmat     ? `<span class="sp sp-h">${sevMap.hazmat} Hazmat</span>`         : "",
+        sevMap.restricted ? `<span class="sp sp-r">${sevMap.restricted} Restricted</span>` : "",
+      ].filter(Boolean).join("");
+
+      return `
+  <div class="carrier-card prod-carrier-card" data-cat="${c.category}" data-ptypes="${[...new Set(prods.map(pr => pr.type))].join(" ")}">
+    <div class="card-header">
+      <div>
+        <div class="carrier-name">${esc(c.name)}</div>
+        <div class="carrier-full">${esc(c.full_name)}</div>
+        <div class="badges">
+          <span class="badge badge-${c.category}">${CAT_LABELS[c.category] || c.category}</span>
+          ${pills}
+        </div>
+      </div>
+      <div class="hq">HQ: ${esc(c.hq)}</div>
+    </div>
+    <div class="card-body">
+      <div class="rcount"><strong>${prods.length}</strong> product restriction${prods.length !== 1 ? "s" : ""}</div>
+      <ul class="rlist">${rows}${hiddenRows}</ul>
+      ${moreBtn}
+    </div>
+    <div class="card-footer">
+      <div></div>
+      <div class="src-block">
+        <div class="src-label">Source</div>
+        <a class="src-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(sourceLabel(c.source_url))}</a>
+        <div class="src-url">${esc(c.source_url)}</div>
+      </div>
+    </div>
+  </div>`;
+    }).join("\n");
+}
+
 function generateDashboard() {
   const now         = new Date();
   const statsHtml   = genStats(CARRIERS);
@@ -987,8 +1050,9 @@ function generateDashboard() {
   const dateStamp   = now.toISOString().slice(0, 10);
   const carrierCsvUri = dataUri(genCarrierCSV(CARRIERS));
   const countryCsvUri = dataUri(genCountryCSV(CARRIERS));
-  const productHtml   = genProductRows();
-  const productCsvUri = dataUri(genProductCSV());
+  const productHtml        = genProductRows();
+  const productCarrierHtml = genProductCarrierCards();
+  const productCsvUri      = dataUri(genProductCSV());
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1105,8 +1169,10 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 .crow-bd.open { display: block; }
 .cr-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: .83rem; }
 .cr-row:last-child { border-bottom: none; }
-.cr-name { font-weight: 600; min-width: 130px; }
-.cr-reason { color: var(--muted); }
+.cr-name { font-weight: 600; min-width: 120px; }
+.cr-reason { color: var(--muted); flex: 1; }
+.cr-src { margin-left: auto; flex-shrink: 0; font-size: .72rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.cr-src:hover { text-decoration: underline; }
 
 .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
 .empty strong { display: block; font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
@@ -1228,16 +1294,30 @@ ${countryHtml}
   </div>
   <div id="view-product" style="display:none">
     <div class="view-header">
-      <span class="view-title">Products carriers restrict or prohibit — sorted by severity, click to expand</span>
-      <a class="csv-btn" href="${productCsvUri}" download="carrier-restrictions-by-product-${dateStamp}.csv">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download CSV
-      </a>
+      <span class="view-title" id="prod-view-title">Products carriers restrict or prohibit — sorted by severity, click to expand</span>
+      <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-prod-type" onclick="switchProductView('type')">By Product Type</button>
+          <button class="view-btn" id="btn-prod-carrier" onclick="switchProductView('carrier')">By Carrier</button>
+        </div>
+        <a class="csv-btn" href="${productCsvUri}" download="carrier-restrictions-by-product-${dateStamp}.csv">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </a>
+      </div>
     </div>
-    <div class="product-list" id="product-list">
+    <div id="prod-view-type">
+      <div class="product-list" id="product-list">
 ${productHtml}
+      </div>
+      <div class="empty hidden" id="product-empty"><strong>No products match your filters.</strong>Try broadening your search.</div>
     </div>
-    <div class="empty hidden" id="product-empty"><strong>No products match your filters.</strong>Try broadening your search.</div>
+    <div id="prod-view-carrier" style="display:none">
+      <div class="carrier-grid" id="prod-carrier-grid">
+${productCarrierHtml}
+      </div>
+      <div class="empty hidden" id="prod-carrier-empty"><strong>No carriers match your filters.</strong>Try broadening your search.</div>
+    </div>
   </div>
 </main>
 
@@ -1248,11 +1328,12 @@ ${productHtml}
 </footer>
 
 <script>
-var currentView = "carrier";
-var typeFilter  = "all";
-var catFilter   = "all";
-var ptypeFilter = "all";
-var searchQuery = "";
+var currentView    = "carrier";
+var productSubView = "type";
+var typeFilter     = "all";
+var catFilter      = "all";
+var ptypeFilter    = "all";
+var searchQuery    = "";
 
 function switchView(v) {
   currentView = v;
@@ -1264,6 +1345,19 @@ function switchView(v) {
   document.getElementById("btn-product").classList.toggle("active", v === "product");
   document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
   document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
+  applyFilters();
+}
+
+function switchProductView(v) {
+  productSubView = v;
+  document.getElementById("prod-view-type").style.display    = v === "type"    ? "" : "none";
+  document.getElementById("prod-view-carrier").style.display = v === "carrier" ? "" : "none";
+  document.getElementById("btn-prod-type").classList.toggle("active", v === "type");
+  document.getElementById("btn-prod-carrier").classList.toggle("active", v === "carrier");
+  var title = document.getElementById("prod-view-title");
+  if (title) title.textContent = v === "type"
+    ? "Products carriers restrict or prohibit — sorted by severity, click to expand"
+    : "Product restrictions by carrier — filtered by category and type";
   applyFilters();
 }
 
@@ -1293,7 +1387,7 @@ function applyFilters() {
   var q = searchQuery.toLowerCase();
 
   if (currentView === "carrier") {
-    var cards = document.querySelectorAll(".carrier-card");
+    var cards = document.querySelectorAll("#carrier-grid .carrier-card");
     var visible = 0;
     cards.forEach(function(card) {
       var catOk  = catFilter === "all" || card.dataset.cat === catFilter;
@@ -1344,18 +1438,48 @@ function applyFilters() {
     document.getElementById("country-list").style.display = visible2 > 0 ? "" : "none";
 
   } else {
-    var prows = document.querySelectorAll(".prow");
-    var visible3 = 0;
-    prows.forEach(function(row) {
-      var ptypeOk  = ptypeFilter === "all" || row.dataset.ptypes.indexOf(ptypeFilter) !== -1;
-      var text     = row.textContent.toLowerCase();
-      var searchOk = !q || text.includes(q);
-      var show = ptypeOk && searchOk;
-      row.classList.toggle("hidden", !show);
-      if (show) visible3++;
-    });
-    document.getElementById("product-empty").classList.toggle("hidden", visible3 > 0);
-    document.getElementById("product-list").style.display = visible3 > 0 ? "" : "none";
+    if (productSubView === "type") {
+      var prows = document.querySelectorAll(".prow");
+      var visible3 = 0;
+      prows.forEach(function(row) {
+        var ptypeOk  = ptypeFilter === "all" || row.dataset.ptypes.indexOf(ptypeFilter) !== -1;
+        var text     = row.textContent.toLowerCase();
+        var searchOk = !q || text.includes(q);
+        var show = ptypeOk && searchOk;
+        row.classList.toggle("hidden", !show);
+        if (show) visible3++;
+      });
+      document.getElementById("product-empty").classList.toggle("hidden", visible3 > 0);
+      document.getElementById("product-list").style.display = visible3 > 0 ? "" : "none";
+
+    } else {
+      var pcards = document.querySelectorAll("#prod-carrier-grid .prod-carrier-card");
+      var visible4 = 0;
+      pcards.forEach(function(card) {
+        var catOk   = catFilter === "all" || card.dataset.cat === catFilter;
+        var ptypeOk = ptypeFilter === "all" || card.dataset.ptypes.indexOf(ptypeFilter) !== -1;
+        var name    = card.querySelector(".carrier-name").textContent.toLowerCase();
+        var full    = card.querySelector(".carrier-full").textContent.toLowerCase();
+        var items   = card.querySelectorAll(".ritem");
+
+        if (ptypeFilter !== "all") {
+          items.forEach(function(item) {
+            item.classList.toggle("hidden", item.dataset.ptype !== ptypeFilter);
+          });
+        } else {
+          items.forEach(function(item) { item.classList.remove("hidden"); });
+        }
+
+        var searchOk = !q || name.includes(q) || full.includes(q) ||
+          Array.from(items).some(function(li) { return li.textContent.toLowerCase().includes(q); });
+
+        var show = catOk && ptypeOk && searchOk;
+        card.classList.toggle("hidden", !show);
+        if (show) visible4++;
+      });
+      document.getElementById("prod-carrier-empty").classList.toggle("hidden", visible4 > 0);
+      document.getElementById("prod-carrier-grid").style.display = visible4 > 0 ? "" : "none";
+    }
   }
 }
 
