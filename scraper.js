@@ -408,6 +408,24 @@ const COMMON_HAZMAT = [
   p("Dry ice",                              "UN 1845 (CO₂) — weight limits, ventilation holes, special labeling",        PH),
 ];
 
+// ── Product source URLs (prohibited/restricted items pages, not country pages) ─
+const PRODUCT_URLS = {
+  ups:          "https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page",
+  fedex:        "https://www.fedex.com/en-us/shipping/restricted-items.html",
+  dhl_express:  "https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html",
+  usps:         "https://www.usps.com/ship/shipping-restrictions.htm",
+  canada_post:  "https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page",
+  royal_mail:   "https://www.royalmail.com/sending/prohibited-and-restricted-items",
+  tnt:          "https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html",
+  purolator:    "https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items",
+  shipbob:      "https://help.shipbob.com/s/article/Prohibited-Products",
+  flexport:     "https://www.flexport.com/compliance/",
+  easyship:     "https://support.easyship.com/hc/en-us/articles/360035900012",
+  shippo:       "https://support.goshippo.com/hc/en-us/articles/360025789131",
+  shipstation:  "https://help.shipstation.com/hc/en-us/articles/360026152791",
+  pitney_bowes: "https://www.pitneybowes.com/us/global-ecommerce.html",
+};
+
 // ── Product restrictions by carrier ID ────────────────────────────────────────
 const PRODUCT_RESTRICTIONS = {
   ups: [
@@ -819,7 +837,7 @@ function genCarrierCards(carriers) {
       : `<span class="badge badge-known">Known</span>`;
 
     return `
-  <div class="carrier-card" data-cat="${c.category}" data-types="${[...new Set(rs.map(r => r.type))].join(" ")}">
+  <div class="carrier-card" data-id="${c.id}" data-cat="${c.category}" data-types="${[...new Set(rs.map(r => r.type))].join(" ")}">
     <div class="card-header">
       <div>
         <div class="carrier-name">${esc(c.name)}</div>
@@ -888,7 +906,7 @@ function genCountryRows(carriers) {
         </div>`).join("");
 
     return `
-  <div class="crow" data-types="${types.join(" ")}" data-cats="${cats.join(" ")}">
+  <div class="crow" data-country="${esc(country)}" data-types="${types.join(" ")}" data-cats="${cats.join(" ")}">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">${esc(country)}</div>
@@ -933,7 +951,8 @@ function genProductRows() {
       if ((sevOrder[pr.type] ?? 3) < (sevOrder[map[pr.product].topType] ?? 3)) {
         map[pr.product].topType = pr.type;
       }
-      map[pr.product].entries.push({ carrier: carrier.name, category: carrier.category, reason: pr.reason, type: pr.type, source_url: carrier.source_url });
+      const prodUrl = PRODUCT_URLS[carrier.id] || carrier.source_url;
+      map[pr.product].entries.push({ carrier: carrier.name, category: carrier.category, reason: pr.reason, type: pr.type, source_url: prodUrl });
     });
   });
 
@@ -1011,6 +1030,7 @@ function genProductCarrierCards() {
         sevMap.restricted ? `<span class="sp sp-r">${sevMap.restricted} Restricted</span>` : "",
       ].filter(Boolean).join("");
 
+      const prodUrl = PRODUCT_URLS[c.id] || c.source_url;
       return `
   <div class="carrier-card prod-carrier-card" data-cat="${c.category}" data-ptypes="${[...new Set(prods.map(pr => pr.type))].join(" ")}">
     <div class="card-header">
@@ -1033,8 +1053,8 @@ function genProductCarrierCards() {
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(sourceLabel(c.source_url))}</a>
-        <div class="src-url">${esc(c.source_url)}</div>
+        <a class="src-link" href="${esc(prodUrl)}" target="_blank" rel="noopener">${esc(sourceLabel(prodUrl))}</a>
+        <div class="src-url">${esc(prodUrl)}</div>
       </div>
     </div>
   </div>`;
@@ -1053,6 +1073,9 @@ function generateDashboard() {
   const productHtml        = genProductRows();
   const productCarrierHtml = genProductCarrierCards();
   const productCsvUri      = dataUri(genProductCSV());
+  const carrierOptions     = CARRIERS.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
+  const allCountries       = [...new Set(CARRIERS.flatMap(c => c.restrictions.map(r => r.country)))].sort((a,b) => a.localeCompare(b));
+  const countryOptions     = allCountries.map(co => `<option value="${esc(co)}">${esc(co)}</option>`).join("");
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1112,19 +1135,21 @@ header { background: linear-gradient(135deg, #0c1628 0%, #1a2c4e 100%); color: #
 .tab-btn.active svg { opacity: 1; }
 
 /* ── Filter bar ──────────────────────────────────────────────────────────────── */
-.filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; box-shadow: 0 1px 0 var(--border); }
-.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 300px; }
-.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-input[type=search] { width: 100%; padding: 7px 12px 7px 34px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .875rem; background: var(--bg); color: var(--text); transition: border .15s, box-shadow .15s; }
+.filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+.search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+input[type=search] { width: 100%; padding: 9px 14px 9px 38px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .9rem; background: var(--bg); color: var(--text); transition: border .15s, box-shadow .15s; }
 input[type=search]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12); background: var(--surface); }
-.filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 2px 2px; flex-shrink: 0; }
-.filter-section { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-.filter-label { font-size: .69rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; white-space: nowrap; }
-.pill { padding: 4px 11px; border-radius: 999px; font-size: .78rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all .12s; white-space: nowrap; }
+.filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 0 2px; flex-shrink: 0; }
+.filter-section { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.filter-label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-right: 2px; white-space: nowrap; }
+.pill { padding: 6px 14px; border-radius: 999px; font-size: .83rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all .12s; white-space: nowrap; }
 .pill:hover { border-color: var(--accent); color: var(--text); }
 .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.sub-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
-.sub-btn { padding: 4px 13px; font-size: .78rem; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); border: none; border-right: 1px solid var(--border); transition: all .12s; white-space: nowrap; }
+.filter-select { padding: 7px 32px 7px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .875rem; font-weight: 500; background: var(--bg); color: var(--text); cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; min-width: 160px; max-width: 240px; transition: border .15s, box-shadow .15s; }
+.filter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12); background-color: var(--surface); }
+.sub-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+.sub-btn { padding: 7px 16px; font-size: .83rem; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); border: none; border-right: 1px solid var(--border); transition: all .12s; white-space: nowrap; }
 .sub-btn:last-child { border-right: none; }
 .sub-btn.active { background: var(--accent); color: #fff; }
 .sub-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
@@ -1277,6 +1302,22 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="search" id="search" placeholder="Search carrier, country or product..." autocomplete="off">
   </div>
+  <div class="filter-section" id="carrier-select-wrap">
+    <div class="filter-sep"></div>
+    <span class="filter-label">Carrier</span>
+    <select class="filter-select" id="carrier-select">
+      <option value="">All carriers</option>
+      ${carrierOptions}
+    </select>
+  </div>
+  <div class="filter-section" id="country-select-wrap" style="display:none">
+    <div class="filter-sep"></div>
+    <span class="filter-label">Country</span>
+    <select class="filter-select" id="country-select">
+      <option value="">All countries</option>
+      ${countryOptions}
+    </select>
+  </div>
   <div class="filter-sep"></div>
   <div class="filter-section" id="type-filter-main">
     <span class="filter-label">Type</span>
@@ -1375,6 +1416,8 @@ var typeFilter     = "all";
 var catFilter      = "all";
 var ptypeFilter    = "all";
 var searchQuery    = "";
+var carrierFilter  = "";
+var countryFilter  = "";
 
 function switchView(v) {
   currentView = v;
@@ -1387,6 +1430,13 @@ function switchView(v) {
   document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
   document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
   document.getElementById("prod-sub-filter").style.display     = v === "product" ? "" : "none";
+  document.getElementById("carrier-select-wrap").style.display = v === "carrier" ? "" : "none";
+  document.getElementById("country-select-wrap").style.display = v === "country" ? "" : "none";
+  // Reset dropdowns on tab switch
+  var cs = document.getElementById("carrier-select");
+  var cns = document.getElementById("country-select");
+  if (cs)  { cs.value  = ""; carrierFilter = ""; }
+  if (cns) { cns.value = ""; countryFilter = ""; }
   applyFilters();
 }
 
@@ -1454,10 +1504,11 @@ function applyFilters() {
         }
       });
 
-      var searchOk = !q || name.includes(q) || full.includes(q) ||
+      var searchOk   = !q || name.includes(q) || full.includes(q) ||
         Array.from(items).some(function(li) { return li.textContent.toLowerCase().includes(q); });
+      var carrierOk  = !carrierFilter || card.dataset.id === carrierFilter;
 
-      var show = catOk && typeOk && searchOk;
+      var show = catOk && typeOk && searchOk && carrierOk;
       card.classList.toggle("hidden", !show);
       if (show) visible++;
     });
@@ -1470,9 +1521,10 @@ function applyFilters() {
     rows.forEach(function(row) {
       var catOk  = catFilter === "all" || row.dataset.cats.indexOf(catFilter) !== -1;
       var typeOk = typeFilter === "all" || row.dataset.types.indexOf(typeFilter) !== -1;
-      var text   = row.textContent.toLowerCase();
-      var searchOk = !q || text.includes(q);
-      var show = catOk && typeOk && searchOk;
+      var text      = row.textContent.toLowerCase();
+      var searchOk  = !q || text.includes(q);
+      var countryOk = !countryFilter || row.dataset.country === countryFilter;
+      var show = catOk && typeOk && searchOk && countryOk;
       row.classList.toggle("hidden", !show);
       if (show) visible2++;
     });
@@ -1568,6 +1620,26 @@ document.querySelectorAll("[data-ptype]").forEach(function(btn) {
     btn.classList.add("active");
     applyFilters();
   });
+});
+
+document.getElementById("carrier-select").addEventListener("change", function() {
+  carrierFilter = this.value;
+  applyFilters();
+});
+
+document.getElementById("country-select").addEventListener("change", function() {
+  countryFilter = this.value;
+  if (countryFilter) {
+    // Auto-expand the matching row
+    document.querySelectorAll(".crow").forEach(function(row) {
+      if (row.dataset.country === countryFilter) {
+        var bd = row.querySelector(".crow-bd");
+        var chev = row.querySelector(".chev");
+        if (bd && !bd.classList.contains("open")) { bd.classList.add("open"); chev && chev.classList.add("open"); }
+      }
+    });
+  }
+  applyFilters();
 });
 </script>
 </body>

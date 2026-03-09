@@ -56,19 +56,21 @@ header { background: linear-gradient(135deg, #0c1628 0%, #1a2c4e 100%); color: #
 .tab-btn.active svg { opacity: 1; }
 
 /* ── Filter bar ──────────────────────────────────────────────────────────────── */
-.filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; box-shadow: 0 1px 0 var(--border); }
-.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 300px; }
-.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-input[type=search] { width: 100%; padding: 7px 12px 7px 34px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .875rem; background: var(--bg); color: var(--text); transition: border .15s, box-shadow .15s; }
+.filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+.search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+input[type=search] { width: 100%; padding: 9px 14px 9px 38px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .9rem; background: var(--bg); color: var(--text); transition: border .15s, box-shadow .15s; }
 input[type=search]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12); background: var(--surface); }
-.filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 2px 2px; flex-shrink: 0; }
-.filter-section { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-.filter-label { font-size: .69rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; white-space: nowrap; }
-.pill { padding: 4px 11px; border-radius: 999px; font-size: .78rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all .12s; white-space: nowrap; }
+.filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 0 2px; flex-shrink: 0; }
+.filter-section { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.filter-label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-right: 2px; white-space: nowrap; }
+.pill { padding: 6px 14px; border-radius: 999px; font-size: .83rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all .12s; white-space: nowrap; }
 .pill:hover { border-color: var(--accent); color: var(--text); }
 .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.sub-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
-.sub-btn { padding: 4px 13px; font-size: .78rem; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); border: none; border-right: 1px solid var(--border); transition: all .12s; white-space: nowrap; }
+.filter-select { padding: 7px 32px 7px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .875rem; font-weight: 500; background: var(--bg); color: var(--text); cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; min-width: 160px; max-width: 240px; transition: border .15s, box-shadow .15s; }
+.filter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12); background-color: var(--surface); }
+.sub-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+.sub-btn { padding: 7px 16px; font-size: .83rem; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); border: none; border-right: 1px solid var(--border); transition: all .12s; white-space: nowrap; }
 .sub-btn:last-child { border-right: none; }
 .sub-btn.active { background: var(--accent); color: #fff; }
 .sub-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
@@ -191,7 +193,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div class="header-icon">🌐</div>
       <div>
         <h1>Carrier Restriction Monitor</h1>
-        <p>Shipping restrictions across 26 carriers &mdash; updated Mar 9, 2026, 10:45 AM</p>
+        <p>Shipping restrictions across 26 carriers &mdash; updated Mar 9, 2026, 10:55 AM</p>
       </div>
     </div>
     <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode">🌙</button>
@@ -230,6 +232,22 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
   <div class="search-wrap">
     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="search" id="search" placeholder="Search carrier, country or product..." autocomplete="off">
+  </div>
+  <div class="filter-section" id="carrier-select-wrap">
+    <div class="filter-sep"></div>
+    <span class="filter-label">Carrier</span>
+    <select class="filter-select" id="carrier-select">
+      <option value="">All carriers</option>
+      <option value="ups">UPS</option><option value="fedex">FedEx</option><option value="dhl_express">DHL Express</option><option value="usps">USPS</option><option value="tnt">TNT</option><option value="canada_post">Canada Post</option><option value="purolator">Purolator</option><option value="royal_mail">Royal Mail</option><option value="postnl">PostNL</option><option value="australia_post">Australia Post</option><option value="la_poste">La Poste</option><option value="dhl_ecommerce">DHL eCommerce</option><option value="maersk">Maersk</option><option value="db_schenker">DB Schenker</option><option value="kuehne_nagel">Kuehne+Nagel</option><option value="xpo">XPO Logistics</option><option value="dsv">DSV</option><option value="shipbob">ShipBob</option><option value="flexport">Flexport</option><option value="easyship">Easyship</option><option value="shippo">Shippo</option><option value="shipstation">ShipStation</option><option value="pitney_bowes">Pitney Bowes</option><option value="asendia">Asendia</option><option value="whiplash">Whiplash</option><option value="radial">Radial</option>
+    </select>
+  </div>
+  <div class="filter-section" id="country-select-wrap" style="display:none">
+    <div class="filter-sep"></div>
+    <span class="filter-label">Country</span>
+    <select class="filter-select" id="country-select">
+      <option value="">All countries</option>
+      <option value="Afghanistan">Afghanistan</option><option value="Belarus">Belarus</option><option value="Burkina Faso">Burkina Faso</option><option value="Central African Republic">Central African Republic</option><option value="Crimea (Ukraine)">Crimea (Ukraine)</option><option value="Cuba">Cuba</option><option value="Donetsk People's Republic">Donetsk People's Republic</option><option value="Eritrea">Eritrea</option><option value="Guinea-Bissau">Guinea-Bissau</option><option value="Haiti">Haiti</option><option value="Iran">Iran</option><option value="Kherson (Ukraine)">Kherson (Ukraine)</option><option value="Libya">Libya</option><option value="Luhansk People's Republic">Luhansk People's Republic</option><option value="Mali">Mali</option><option value="Myanmar">Myanmar</option><option value="Niger">Niger</option><option value="North Korea (DPRK)">North Korea (DPRK)</option><option value="Russia">Russia</option><option value="Somalia">Somalia</option><option value="South Sudan">South Sudan</option><option value="Sudan">Sudan</option><option value="Syria">Syria</option><option value="Ukraine (certain areas)">Ukraine (certain areas)</option><option value="Ukraine (conflict areas)">Ukraine (conflict areas)</option><option value="Venezuela">Venezuela</option><option value="Yemen">Yemen</option><option value="Zaporizhzhia (Ukraine)">Zaporizhzhia (Ukraine)</option>
+    </select>
   </div>
   <div class="filter-sep"></div>
   <div class="filter-section" id="type-filter-main">
@@ -277,7 +295,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
     <div class="carrier-grid" id="carrier-grid">
 
-  <div class="carrier-card" data-cat="express" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="ups" data-cat="express" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">UPS</div>
@@ -390,7 +408,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="express" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="fedex" data-cat="express" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">FedEx</div>
@@ -507,7 +525,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="express" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="dhl_express" data-cat="express" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">DHL Express</div>
@@ -608,7 +626,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="usps" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">USPS</div>
@@ -749,7 +767,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="express" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="tnt" data-cat="express" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">TNT</div>
@@ -858,7 +876,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="canada_post" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Canada Post</div>
@@ -951,7 +969,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="express" data-types="sanctions suspended">
+  <div class="carrier-card" data-id="purolator" data-cat="express" data-types="sanctions suspended">
     <div class="card-header">
       <div>
         <div class="carrier-name">Purolator</div>
@@ -1004,7 +1022,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="royal_mail" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Royal Mail</div>
@@ -1093,7 +1111,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="postnl" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">PostNL</div>
@@ -1178,7 +1196,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="australia_post" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Australia Post</div>
@@ -1263,7 +1281,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="postal" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="la_poste" data-cat="postal" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">La Poste</div>
@@ -1348,7 +1366,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="ecommerce" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="dhl_ecommerce" data-cat="ecommerce" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">DHL eCommerce</div>
@@ -1441,7 +1459,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="freight" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="maersk" data-cat="freight" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Maersk</div>
@@ -1506,7 +1524,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="freight" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="db_schenker" data-cat="freight" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">DB Schenker</div>
@@ -1571,7 +1589,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="freight" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="kuehne_nagel" data-cat="freight" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Kuehne+Nagel</div>
@@ -1632,7 +1650,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="freight" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="xpo" data-cat="freight" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">XPO Logistics</div>
@@ -1717,7 +1735,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="freight" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="dsv" data-cat="freight" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">DSV</div>
@@ -1802,7 +1820,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended">
+  <div class="carrier-card" data-id="shipbob" data-cat="3pl" data-types="sanctions suspended">
     <div class="card-header">
       <div>
         <div class="carrier-name">ShipBob</div>
@@ -1915,7 +1933,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="flexport" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Flexport</div>
@@ -2024,7 +2042,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="easyship" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Easyship</div>
@@ -2133,7 +2151,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="shippo" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Shippo</div>
@@ -2242,7 +2260,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="shipstation" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">ShipStation</div>
@@ -2351,7 +2369,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="pitney_bowes" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Pitney Bowes</div>
@@ -2460,7 +2478,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="asendia" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Asendia</div>
@@ -2545,7 +2563,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="whiplash" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Whiplash</div>
@@ -2654,7 +2672,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
   </div>
 
-  <div class="carrier-card" data-cat="3pl" data-types="sanctions suspended limited">
+  <div class="carrier-card" data-id="radial" data-cat="3pl" data-types="sanctions suspended limited">
     <div class="card-header">
       <div>
         <div class="carrier-name">Radial</div>
@@ -2775,7 +2793,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
     </div>
     <div class="country-list" id="country-list">
 
-  <div class="crow" data-types="suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Belarus" data-types="suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Belarus</div>
@@ -2917,7 +2935,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Iran" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Iran</div>
@@ -3059,7 +3077,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="North Korea (DPRK)" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">North Korea (DPRK)</div>
@@ -3201,7 +3219,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Russia" data-types="suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Russia</div>
@@ -3343,7 +3361,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Syria" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Syria</div>
@@ -3485,7 +3503,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Yemen" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Yemen</div>
@@ -3622,7 +3640,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Libya" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Libya</div>
@@ -3754,7 +3772,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Somalia" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Somalia</div>
@@ -3886,7 +3904,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Afghanistan" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Afghanistan</div>
@@ -4003,7 +4021,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Haiti" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Haiti</div>
@@ -4120,7 +4138,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Myanmar" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Myanmar</div>
@@ -4237,7 +4255,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="South Sudan" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">South Sudan</div>
@@ -4354,7 +4372,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Sudan" data-types="limited suspended" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Sudan</div>
@@ -4471,7 +4489,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Crimea (Ukraine)" data-types="sanctions" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Crimea (Ukraine)</div>
@@ -4563,7 +4581,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions limited" data-cats="express postal ecommerce freight 3pl">
+  <div class="crow" data-country="Cuba" data-types="sanctions limited" data-cats="express postal ecommerce freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Cuba</div>
@@ -4655,7 +4673,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal freight 3pl">
+  <div class="crow" data-country="Donetsk People's Republic" data-types="sanctions" data-cats="express postal freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Donetsk People's Republic</div>
@@ -4732,7 +4750,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal freight 3pl">
+  <div class="crow" data-country="Kherson (Ukraine)" data-types="sanctions" data-cats="express postal freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Kherson (Ukraine)</div>
@@ -4809,7 +4827,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal freight 3pl">
+  <div class="crow" data-country="Luhansk People's Republic" data-types="sanctions" data-cats="express postal freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Luhansk People's Republic</div>
@@ -4886,7 +4904,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="sanctions" data-cats="express postal freight 3pl">
+  <div class="crow" data-country="Zaporizhzhia (Ukraine)" data-types="sanctions" data-cats="express postal freight 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Zaporizhzhia (Ukraine)</div>
@@ -4963,7 +4981,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited suspended" data-cats="express postal 3pl">
+  <div class="crow" data-country="Venezuela" data-types="limited suspended" data-cats="express postal 3pl">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Venezuela</div>
@@ -5000,7 +5018,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="express postal">
+  <div class="crow" data-country="Central African Republic" data-types="limited" data-cats="express postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Central African Republic</div>
@@ -5022,7 +5040,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="suspended" data-cats="express postal">
+  <div class="crow" data-country="Ukraine (conflict areas)" data-types="suspended" data-cats="express postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Ukraine (conflict areas)</div>
@@ -5044,7 +5062,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Burkina Faso" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Burkina Faso</div>
@@ -5061,7 +5079,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Eritrea" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Eritrea</div>
@@ -5078,7 +5096,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Guinea-Bissau" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Guinea-Bissau</div>
@@ -5095,7 +5113,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Mali" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Mali</div>
@@ -5112,7 +5130,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Niger" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Niger</div>
@@ -5129,7 +5147,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
         </div></div>
   </div>
 
-  <div class="crow" data-types="limited" data-cats="postal">
+  <div class="crow" data-country="Ukraine (certain areas)" data-types="limited" data-cats="postal">
     <div class="crow-hd" onclick="toggleCountry(this)">
       <div>
         <div class="cn">Ukraine (certain areas)</div>
@@ -5173,79 +5191,79 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited — commercial carriers do not accept explosive materials</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5269,79 +5287,79 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited by federal and international law</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5365,79 +5383,79 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited by law</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5461,79 +5479,79 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited except NRC/IAEA-licensed shippers with prior carrier approval</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5557,61 +5575,61 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited internationally; domestic acceptance extremely limited</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Restricted: Canadian Firearms Act compliance; registration certificate and mailing permit required</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited internationally; extremely limited domestic acceptance</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Restricted: must comply with Canadian Firearms Act; carrier approval required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited in ShipBob warehouses</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Restricted: ITAR/EAR export license required; strict compliance documentation</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited across all connected carriers</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited on standard Shippo carrier integrations</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited on standard ShipStation carrier integrations</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5635,37 +5653,37 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited domestically (rare state permit exceptions); prohibited in international mail</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited domestically except via licensed provincial liquor board channels; internationally prohibited to most countries</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Restricted: country-specific rules; import duty and licensing compliance required</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Restricted: provincial regulations apply; licensed shipper agreement required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Restricted: state licensing required; limited to select warehouse locations</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Restricted: import/export licensing required; destination-specific rules</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5683,37 +5701,37 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited in international mail; domestic allowed only for licensed Cannabis Act retailers to adults</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Restricted: domestic only; licensed Cannabis Act retailer required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Prohibited internationally</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5731,31 +5749,31 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: PACT Act compliance required; no consumer delivery in most states</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Restricted: PACT Act compliance; no consumer delivery</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Restricted: licensing and import permit required; destination-specific rules apply</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited: PACT Act bans USPS delivery of cigarettes/smokeless tobacco to consumers</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Restricted: duty/excise tax compliance required; destination-specific restrictions apply</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5773,31 +5791,31 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited: illegal under US federal law and internationally</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited: federal law</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited: illegal under most national laws</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited: federal law</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Prohibited (cannabis); CBD products require compliance review and pre-approval</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5815,31 +5833,31 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: carrier approval required; limited services and species only</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited: FedEx Express does not accept live animals (very limited Ground exceptions)</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Restricted: limited to day-old poultry, adult birds, invertebrates — carrier approval required</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Restricted: limited species only; carrier approval required</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5857,31 +5875,31 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Prohibited in international mail</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited in international mail</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Prohibited</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5899,19 +5917,19 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Prohibited in international shipments</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Prohibited in international shipments</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Prohibited in international mail</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -5929,13 +5947,13 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dp"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Prohibited or requires licensed carrier agreement beyond standard Shippo access</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Prohibited or requires licensed shipper agreement via connected carrier</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dp"></span>
@@ -5959,61 +5977,61 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dh"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Flammable — surface mail only domestic; air mail prohibited for most international destinations</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited in air mail (Class 3 flammable); surface mail allowed within limits</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Class 3 flammable liquid — UN 3175 / ORM-D; hazmat labeling required</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Hazmat: many connected carriers prohibit or severely limit via air</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
@@ -6037,55 +6055,55 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dh"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Surface mail only domestically — prohibited in air; IATA restrictions for international mail</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited in air mail — surface mail only with IATA-compliant packaging</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">IATA/DOT regulated — PI 965–970; Wh limits, special packaging &amp; labeling</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
@@ -6109,49 +6127,49 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dh"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Surface mail only; prohibited in air mail; strict quantity limits</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Class 2.1/2.2 hazmat — quantity limits, hazmat labeling required</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
@@ -6175,49 +6193,49 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dh"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Restricted: surface mail only; max 2.27 kg (5 lb) per package; vent holes and labeling required</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Canada Post</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">UN 1845 (CO₂) — weight limits, ventilation holes, special labeling</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dh"></span>
@@ -6241,7 +6259,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dh"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Prohibited in air mail; surface mail only with strict quantity limits</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6259,25 +6277,25 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: UPS licensed shipper agreement required; state-to-state rules vary</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Restricted: licensed shipper agreement required; domestic US only for most services</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Restricted: country-specific rules; licensed importer/exporter required; many destinations prohibited</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Restricted: country-specific licensing and import permits required</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6295,19 +6313,19 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Royal Mail</span>
           <span class="cr-reason">Restricted: import duties and destination compliance required</span>
-          <a class="cr-src" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">TNT</span>
           <span class="cr-reason">Restricted: import compliance and licensing required</span>
-          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Purolator</span>
           <span class="cr-reason">Restricted: excise compliance required</span>
-          <a class="cr-src" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
@@ -6331,25 +6349,25 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Restricted: carrier-dependent DG compliance required; pre-approval needed</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Restricted: carrier-dependent; some carriers require pre-approval for standalone batteries</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Inherits carrier restrictions — most carriers require DG compliance documentation</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Inherits from connected carrier — IATA/DOT DG rules apply</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6367,19 +6385,19 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: insulated/temperature-control packaging required; transit time not guaranteed</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">DHL Express</span>
           <span class="cr-reason">Restricted: adequate packaging required; transit time not guaranteed</span>
-          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Restricted: cold chain warehouses only; limited availability</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6397,19 +6415,19 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Restricted: limited acceptance; carrier and warehouse pre-approval required</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">Shippo</span>
           <span class="cr-reason">Inherits carrier restrictions — most restrict or prohibit hazmat shipments</span>
-          <a class="cr-src" href="https://support.goshippo.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">ShipStation</span>
           <span class="cr-reason">Inherits from connected carrier — most require DG/hazmat approval</span>
-          <a class="cr-src" href="https://help.shipstation.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6427,13 +6445,13 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: UPS Firearms Program enrollment required; adult signature; FFL for handguns</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Restricted: FedEx Firearms Program required; adult signature; FFL for handguns</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6451,13 +6469,13 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">UPS</span>
           <span class="cr-reason">Restricted: declared as cremated remains; inner/outer container requirements apply</span>
-          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Restricted: declared as cremated remains; special packaging and adult signature required</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6475,7 +6493,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Restricted: FDA/import compliance required; prescription drugs need prior approval</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div>
         <div class="cr-row">
           <span class="dot dr"></span>
@@ -6499,7 +6517,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">FedEx</span>
           <span class="cr-reason">Restricted: FedEx Custom Critical or insulated cold pack required; no standard-service guarantee</span>
-          <a class="cr-src" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6517,7 +6535,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Restricted: handguns to/from licensed dealers (FFL) only; adult signature required</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6535,7 +6553,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">USPS</span>
           <span class="cr-reason">Restricted: legal recipient only; adult signature required</span>
-          <a class="cr-src" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6553,7 +6571,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">ShipBob</span>
           <span class="cr-reason">Restricted: PACT Act compliance and age verification required</span>
-          <a class="cr-src" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6571,7 +6589,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Restricted: FDA Prior Notice required for US imports; country-specific import rules apply</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6589,7 +6607,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Flexport</span>
           <span class="cr-reason">Restricted: Export Administration Regulations (EAR) compliance and licensing may be required</span>
-          <a class="cr-src" href="https://www.flexport.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6607,7 +6625,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Restricted: carrier and destination-dependent; licensing often required</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
 
@@ -6625,7 +6643,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
           <span class="dot dr"></span>
           <span class="cr-name">Easyship</span>
           <span class="cr-reason">Restricted: carrier and destination rules apply</span>
-          <a class="cr-src" href="https://support.easyship.com/" target="_blank" rel="noopener">Source ↗</a>
+          <a class="cr-src" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Source ↗</a>
         </div></div>
   </div>
       </div>
@@ -6719,8 +6737,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page" target="_blank" rel="noopener">UPS Sanctioned Countries &amp; Embargoes</a>
-        <div class="src-url">https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page</div>
+        <a class="src-link" href="https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page" target="_blank" rel="noopener">UPS Sanctioned Countries &amp; Embargoes</a>
+        <div class="src-url">https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page</div>
       </div>
     </div>
   </div>
@@ -6810,8 +6828,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.fedex.com/en-us/service-alerts.html" target="_blank" rel="noopener">FedEx Service Alerts</a>
-        <div class="src-url">https://www.fedex.com/en-us/service-alerts.html</div>
+        <a class="src-link" href="https://www.fedex.com/en-us/shipping/restricted-items.html" target="_blank" rel="noopener">FedEx Service Alerts</a>
+        <div class="src-url">https://www.fedex.com/en-us/shipping/restricted-items.html</div>
       </div>
     </div>
   </div>
@@ -6893,8 +6911,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html" target="_blank" rel="noopener">DHL Express Service Alerts</a>
-        <div class="src-url">https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html</div>
+        <a class="src-link" href="https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html" target="_blank" rel="noopener">DHL Express Service Alerts</a>
+        <div class="src-url">https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html</div>
       </div>
     </div>
   </div>
@@ -6980,8 +6998,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://pe.usps.com/text/Imm/immc2_002.htm" target="_blank" rel="noopener">USPS International Mail Manual (IMM Appendix C)</a>
-        <div class="src-url">https://pe.usps.com/text/Imm/immc2_002.htm</div>
+        <a class="src-link" href="https://www.usps.com/ship/shipping-restrictions.htm" target="_blank" rel="noopener">www.usps.com</a>
+        <div class="src-url">https://www.usps.com/ship/shipping-restrictions.htm</div>
       </div>
     </div>
   </div>
@@ -7059,8 +7077,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.tnt.com/express/en_gc/site/service-alerts.html" target="_blank" rel="noopener">TNT Service Alerts</a>
-        <div class="src-url">https://www.tnt.com/express/en_gc/site/service-alerts.html</div>
+        <a class="src-link" href="https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html" target="_blank" rel="noopener">TNT Service Alerts</a>
+        <div class="src-url">https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html</div>
       </div>
     </div>
   </div>
@@ -7142,8 +7160,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page" target="_blank" rel="noopener">Canada Post International Service Alerts</a>
-        <div class="src-url">https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page</div>
+        <a class="src-link" href="https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page" target="_blank" rel="noopener">Canada Post International Service Alerts</a>
+        <div class="src-url">https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page</div>
       </div>
     </div>
   </div>
@@ -7221,8 +7239,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.purolator.com/en/service-updates" target="_blank" rel="noopener">Purolator Service Updates</a>
-        <div class="src-url">https://www.purolator.com/en/service-updates</div>
+        <a class="src-link" href="https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items" target="_blank" rel="noopener">Purolator Service Updates</a>
+        <div class="src-url">https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items</div>
       </div>
     </div>
   </div>
@@ -7300,8 +7318,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.royalmail.com/sending/international/tracking-your-international-item/country-list" target="_blank" rel="noopener">Royal Mail International Country List</a>
-        <div class="src-url">https://www.royalmail.com/sending/international/tracking-your-international-item/country-list</div>
+        <a class="src-link" href="https://www.royalmail.com/sending/prohibited-and-restricted-items" target="_blank" rel="noopener">Royal Mail International Country List</a>
+        <div class="src-url">https://www.royalmail.com/sending/prohibited-and-restricted-items</div>
       </div>
     </div>
   </div>
@@ -7371,8 +7389,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://help.shipbob.com/s/article/International-Shipping-Countries" target="_blank" rel="noopener">ShipBob International Shipping Countries</a>
-        <div class="src-url">https://help.shipbob.com/s/article/International-Shipping-Countries</div>
+        <a class="src-link" href="https://help.shipbob.com/s/article/Prohibited-Products" target="_blank" rel="noopener">ShipBob International Shipping Countries</a>
+        <div class="src-url">https://help.shipbob.com/s/article/Prohibited-Products</div>
       </div>
     </div>
   </div>
@@ -7454,8 +7472,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://www.flexport.com/" target="_blank" rel="noopener">Flexport Trade Compliance</a>
-        <div class="src-url">https://www.flexport.com/</div>
+        <a class="src-link" href="https://www.flexport.com/compliance/" target="_blank" rel="noopener">Flexport Trade Compliance</a>
+        <div class="src-url">https://www.flexport.com/compliance/</div>
       </div>
     </div>
   </div>
@@ -7521,8 +7539,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://support.easyship.com/" target="_blank" rel="noopener">Easyship Support Center</a>
-        <div class="src-url">https://support.easyship.com/</div>
+        <a class="src-link" href="https://support.easyship.com/hc/en-us/articles/360035900012" target="_blank" rel="noopener">Easyship Support Center</a>
+        <div class="src-url">https://support.easyship.com/hc/en-us/articles/360035900012</div>
       </div>
     </div>
   </div>
@@ -7580,8 +7598,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://support.goshippo.com/" target="_blank" rel="noopener">Shippo Support Center</a>
-        <div class="src-url">https://support.goshippo.com/</div>
+        <a class="src-link" href="https://support.goshippo.com/hc/en-us/articles/360025789131" target="_blank" rel="noopener">Shippo Support Center</a>
+        <div class="src-url">https://support.goshippo.com/hc/en-us/articles/360025789131</div>
       </div>
     </div>
   </div>
@@ -7639,8 +7657,8 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
       <div></div>
       <div class="src-block">
         <div class="src-label">Source</div>
-        <a class="src-link" href="https://help.shipstation.com/" target="_blank" rel="noopener">ShipStation Help Center</a>
-        <div class="src-url">https://help.shipstation.com/</div>
+        <a class="src-link" href="https://help.shipstation.com/hc/en-us/articles/360026152791" target="_blank" rel="noopener">ShipStation Help Center</a>
+        <div class="src-url">https://help.shipstation.com/hc/en-us/articles/360026152791</div>
       </div>
     </div>
   </div>
@@ -7726,7 +7744,7 @@ footer { margin-top: 48px; padding: 24px; text-align: center; font-size: .78rem;
 </main>
 
 <footer>
-  Generated Mar 9, 2026, 10:45 AM &nbsp;&bull;&nbsp;
+  Generated Mar 9, 2026, 10:55 AM &nbsp;&bull;&nbsp;
   Data sourced from official carrier service pages. Verify at carrier links before making shipping decisions.
   <br>Sanctions based on OFAC, EU, UN, and national lists current at scan time.
 </footer>
@@ -7738,6 +7756,8 @@ var typeFilter     = "all";
 var catFilter      = "all";
 var ptypeFilter    = "all";
 var searchQuery    = "";
+var carrierFilter  = "";
+var countryFilter  = "";
 
 function switchView(v) {
   currentView = v;
@@ -7750,6 +7770,13 @@ function switchView(v) {
   document.getElementById("type-filter-main").style.display    = v === "product" ? "none" : "";
   document.getElementById("type-filter-product").style.display = v === "product" ? "" : "none";
   document.getElementById("prod-sub-filter").style.display     = v === "product" ? "" : "none";
+  document.getElementById("carrier-select-wrap").style.display = v === "carrier" ? "" : "none";
+  document.getElementById("country-select-wrap").style.display = v === "country" ? "" : "none";
+  // Reset dropdowns on tab switch
+  var cs = document.getElementById("carrier-select");
+  var cns = document.getElementById("country-select");
+  if (cs)  { cs.value  = ""; carrierFilter = ""; }
+  if (cns) { cns.value = ""; countryFilter = ""; }
   applyFilters();
 }
 
@@ -7817,10 +7844,11 @@ function applyFilters() {
         }
       });
 
-      var searchOk = !q || name.includes(q) || full.includes(q) ||
+      var searchOk   = !q || name.includes(q) || full.includes(q) ||
         Array.from(items).some(function(li) { return li.textContent.toLowerCase().includes(q); });
+      var carrierOk  = !carrierFilter || card.dataset.id === carrierFilter;
 
-      var show = catOk && typeOk && searchOk;
+      var show = catOk && typeOk && searchOk && carrierOk;
       card.classList.toggle("hidden", !show);
       if (show) visible++;
     });
@@ -7833,9 +7861,10 @@ function applyFilters() {
     rows.forEach(function(row) {
       var catOk  = catFilter === "all" || row.dataset.cats.indexOf(catFilter) !== -1;
       var typeOk = typeFilter === "all" || row.dataset.types.indexOf(typeFilter) !== -1;
-      var text   = row.textContent.toLowerCase();
-      var searchOk = !q || text.includes(q);
-      var show = catOk && typeOk && searchOk;
+      var text      = row.textContent.toLowerCase();
+      var searchOk  = !q || text.includes(q);
+      var countryOk = !countryFilter || row.dataset.country === countryFilter;
+      var show = catOk && typeOk && searchOk && countryOk;
       row.classList.toggle("hidden", !show);
       if (show) visible2++;
     });
@@ -7931,6 +7960,26 @@ document.querySelectorAll("[data-ptype]").forEach(function(btn) {
     btn.classList.add("active");
     applyFilters();
   });
+});
+
+document.getElementById("carrier-select").addEventListener("change", function() {
+  carrierFilter = this.value;
+  applyFilters();
+});
+
+document.getElementById("country-select").addEventListener("change", function() {
+  countryFilter = this.value;
+  if (countryFilter) {
+    // Auto-expand the matching row
+    document.querySelectorAll(".crow").forEach(function(row) {
+      if (row.dataset.country === countryFilter) {
+        var bd = row.querySelector(".crow-bd");
+        var chev = row.querySelector(".chev");
+        if (bd && !bd.classList.contains("open")) { bd.classList.add("open"); chev && chev.classList.add("open"); }
+      }
+    });
+  }
+  applyFilters();
 });
 </script>
 </body>
