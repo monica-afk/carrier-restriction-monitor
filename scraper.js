@@ -85,8 +85,8 @@ const CARRIERS = [
   {
     id: "ups", name: "UPS", full_name: "United Parcel Service",
     category: "express", hq: "US",
-    source_url: "https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries.page",
-    alerts_url: "https://www.ups.com/us/en/service-alerts.page",
+    source_url: "https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries",
+    alerts_url: "https://www.ups.com/us/en/support/shipping-special-care-regulated-items/sanctioned-countries",
     scrapeFn: scrapeUPS,
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED,
       r("Venezuela", "Limited services", L),
@@ -96,8 +96,8 @@ const CARRIERS = [
   {
     id: "fedex", name: "FedEx", full_name: "FedEx Corporation",
     category: "express", hq: "US",
-    source_url: "https://www.fedex.com/en-us/service-alerts.html",
-    alerts_url: "https://www.fedex.com/en-us/service-alerts.html",
+    source_url: "https://www.fedex.com/en-us/regulatory-compliance/denied-parties.html",
+    alerts_url: "https://www.fedex.com/en-us/regulatory-compliance/denied-parties.html",
     scrapeFn: scrapeFedEx,
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED,
       r("Venezuela",                "Limited services",    L),
@@ -108,8 +108,8 @@ const CARRIERS = [
   {
     id: "dhl_express", name: "DHL Express", full_name: "DHL Express",
     category: "express", hq: "Germany",
-    source_url: "https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html",
-    alerts_url: "https://www.dhl.com/us-en/home/our-divisions/express/service-alerts.html",
+    source_url: "https://www.dhl.com/discover/en-us/business/shipping-advice/sanctioned-countries",
+    alerts_url: "https://www.dhl.com/discover/en-us/business/shipping-advice/sanctioned-countries",
     scrapeFn: scrapeDHL,
     restrictions: [
       r("Cuba",               "OFAC / EU sanctions",  S),
@@ -127,8 +127,8 @@ const CARRIERS = [
   {
     id: "usps", name: "USPS", full_name: "US Postal Service",
     category: "postal", hq: "US",
-    source_url: "https://pe.usps.com/text/Imm/immc2_002.htm",
-    alerts_url: "https://pe.usps.com/text/Imm/immc2_002.htm",
+    source_url: "https://pe.usps.com/text/imm/immc5_002.htm",
+    alerts_url: "https://pe.usps.com/text/imm/immc5_002.htm",
     scrapeFn: scrapeUSPS,
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS,
       r("Afghanistan",              "Mail service suspended",  X),
@@ -153,16 +153,16 @@ const CARRIERS = [
   {
     id: "tnt", name: "TNT", full_name: "TNT (FedEx subsidiary)",
     category: "express", hq: "Netherlands",
-    source_url: "https://www.tnt.com/express/en_gc/site/service-alerts.html",
-    alerts_url: "https://www.tnt.com/express/en_gc/site/service-alerts.html",
+    source_url: "https://www.tnt.com/express/en_gc/site/how-to/comply-with-export-regulations.html",
+    alerts_url: "https://www.tnt.com/express/en_gc/site/how-to/comply-with-export-regulations.html",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
   {
     id: "canada_post", name: "Canada Post", full_name: "Canada Post / Postes Canada",
     category: "postal", hq: "Canada",
-    source_url: "https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page",
-    alerts_url: "https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page",
+    source_url: "https://www.canadapost-postescanada.ca/cpc/en/support/personal/international-destinations-listing.page",
+    alerts_url: "https://www.canadapost-postescanada.ca/cpc/en/support/personal/international-destinations-listing.page",
     scrapeFn: scrapeCanadaPost,
     restrictions: [
       r("Iran",               "Canadian / UN sanctions",  S),
@@ -179,8 +179,8 @@ const CARRIERS = [
     id: "purolator", name: "Purolator", full_name: "Purolator Inc.",
     category: "express", hq: "Canada",
     note: "Primarily domestic Canada; limited international reach",
-    source_url: "https://www.purolator.com/en/service-updates",
-    alerts_url: "https://www.purolator.com/en/service-updates",
+    source_url: "https://www.purolator.com/en/resources-support/service-alerts-updates/service-alert-international-shipments",
+    alerts_url: "https://www.purolator.com/en/resources-support/service-alerts-updates/service-alert-international-shipments",
     restrictions: [
       r("Iran",               "Sanctions compliance",  S),
       r("North Korea (DPRK)", "Sanctions compliance",  S),
@@ -192,8 +192,8 @@ const CARRIERS = [
   {
     id: "royal_mail", name: "Royal Mail", full_name: "Royal Mail Group",
     category: "postal", hq: "UK",
-    source_url: "https://www.royalmail.com/sending/international/tracking-your-international-item/country-list",
-    alerts_url: "https://www.royalmail.com/sending/international/tracking-your-international-item/country-list",
+    source_url: "https://www.royalmail.com/international-sanctions",
+    alerts_url: "https://www.royalmail.com/international-sanctions",
     restrictions: [
       r("Iran",               "UK / UN sanctions",  S),
       r("North Korea (DPRK)", "UK / UN sanctions",  S),
@@ -206,16 +206,16 @@ const CARRIERS = [
   {
     id: "postnl", name: "PostNL", full_name: "PostNL (Netherlands)",
     category: "postal", hq: "Netherlands",
-    source_url: "https://www.postnl.nl/en/service-disruptions/",
-    alerts_url: "https://www.postnl.nl/en/service-disruptions/",
+    source_url: "https://www.postnl.nl/en/sending/international-service-alerts/",
+    alerts_url: "https://www.postnl.nl/en/sending/international-service-alerts/",
     restrictions: [...OFAC_INTL, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
   {
     id: "australia_post", name: "Australia Post", full_name: "Australia Post",
     category: "postal", hq: "Australia",
-    source_url: "https://auspost.com.au/business/shipping/international-shipping/suspended-international-mail",
-    alerts_url: "https://auspost.com.au/business/shipping/international-shipping/suspended-international-mail",
+    source_url: "https://auspost.com.au/disruptions-and-updates/international-service-updates",
+    alerts_url: "https://auspost.com.au/disruptions-and-updates/international-service-updates",
     restrictions: [
       r("Iran",               "Australian / UN sanctions",  S),
       r("North Korea (DPRK)", "Australian / UN sanctions",  S),
@@ -235,8 +235,8 @@ const CARRIERS = [
   {
     id: "dhl_ecommerce", name: "DHL eCommerce", full_name: "DHL eCommerce Solutions",
     category: "ecommerce", hq: "Germany",
-    source_url: "https://www.dhl.com/us-en/home/our-divisions/ecommerce.html",
-    alerts_url: "https://www.dhl.com/us-en/home/our-divisions/ecommerce.html",
+    source_url: "https://www.dhl.com/us-en/home/ecommerce/business-help-center/hazardous-goods-and-unacceptable-shipments.html",
+    alerts_url: "https://www.dhl.com/us-en/home/ecommerce/business-help-center/hazardous-goods-and-unacceptable-shipments.html",
     restrictions: [
       r("Cuba",               "OFAC / EU sanctions",  S),
       r("Iran",               "OFAC / EU sanctions",  S),
@@ -251,8 +251,8 @@ const CARRIERS = [
   {
     id: "maersk", name: "Maersk", full_name: "A.P. Moller-Maersk",
     category: "freight", hq: "Denmark",
-    source_url: "https://www.maersk.com/local-information",
-    alerts_url: "https://www.maersk.com/local-information",
+    source_url: "https://www.maersk.com/support/faqs/policy-on-shipments-involving-russia-and-eu-us-and-un-sanctions-and-export-control-laws",
+    alerts_url: "https://www.maersk.com/support/faqs/policy-on-shipments-involving-russia-and-eu-us-and-un-sanctions-and-export-control-laws",
     restrictions: [
       ...OFAC_INTL, ...RUSSIA_BELARUS,
       r("Libya",   "Limited — security",  L),
@@ -264,8 +264,8 @@ const CARRIERS = [
   {
     id: "db_schenker", name: "DB Schenker", full_name: "DB Schenker (Deutsche Bahn)",
     category: "freight", hq: "Germany",
-    source_url: "https://www.dbschenker.com/global/about/news/sanctions-russia-ukraine-1168636",
-    alerts_url: "https://www.dbschenker.com/global/about/news/sanctions-russia-ukraine-1168636",
+    source_url: "https://www.dbschenker.com/global/compliance",
+    alerts_url: "https://www.dbschenker.com/global/compliance",
     restrictions: [
       ...OFAC_INTL, ...RUSSIA_BELARUS,
       r("Libya",   "Limited service",  L),
@@ -277,8 +277,8 @@ const CARRIERS = [
   {
     id: "kuehne_nagel", name: "Kuehne+Nagel", full_name: "Kuehne+Nagel International AG",
     category: "freight", hq: "Switzerland",
-    source_url: "https://home.kuehne-nagel.com/",
-    alerts_url: "https://home.kuehne-nagel.com/",
+    source_url: "https://www.kuehne-nagel.com/company/news/updates-on-global-trade-and-tariffs",
+    alerts_url: "https://www.kuehne-nagel.com/company/news/updates-on-global-trade-and-tariffs",
     restrictions: [
       ...OFAC_INTL, ...RUSSIA_BELARUS,
       r("Yemen",   "Limited service",  L),
@@ -310,8 +310,8 @@ const CARRIERS = [
     id: "shipbob", name: "ShipBob", full_name: "ShipBob Inc.",
     category: "3pl", hq: "US",
     note: "Country support varies by fulfillment center location",
-    source_url: "https://help.shipbob.com/s/article/International-Shipping-Countries",
-    alerts_url: "https://help.shipbob.com/s/article/International-Shipping-Countries",
+    source_url: "https://support.shipbob.com/s/article/FAQ-International-Shipping",
+    alerts_url: "https://support.shipbob.com/s/article/FAQ-International-Shipping",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS,
       r("Afghanistan", "Not supported",  X),
       r("Haiti",       "Not supported",  X),
@@ -337,8 +337,8 @@ const CARRIERS = [
     id: "easyship", name: "Easyship", full_name: "Easyship",
     category: "3pl", hq: "Hong Kong",
     note: "Restrictions vary by carrier selected",
-    source_url: "https://support.easyship.com/",
-    alerts_url: "https://support.easyship.com/",
+    source_url: "https://support.easyship.com/hc/en-us/sections/19220990214290-Restricted-Prohibited-Goods",
+    alerts_url: "https://support.easyship.com/hc/en-us/sections/19220990214290-Restricted-Prohibited-Goods",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
@@ -346,8 +346,8 @@ const CARRIERS = [
     id: "shippo", name: "Shippo", full_name: "Shippo",
     category: "3pl", hq: "US",
     note: "Inherits restrictions from connected carrier accounts",
-    source_url: "https://support.goshippo.com/",
-    alerts_url: "https://support.goshippo.com/",
+    source_url: "https://support.goshippo.com/hc/en-us/articles/115001897106-Carrier-Restricted-Countries",
+    alerts_url: "https://support.goshippo.com/hc/en-us/articles/115001897106-Carrier-Restricted-Countries",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
@@ -355,24 +355,24 @@ const CARRIERS = [
     id: "shipstation", name: "ShipStation", full_name: "ShipStation",
     category: "3pl", hq: "US",
     note: "Inherits restrictions from connected carrier accounts",
-    source_url: "https://help.shipstation.com/",
-    alerts_url: "https://help.shipstation.com/",
+    source_url: "https://help.shipstation.com/hc/en-us/articles/25007865974299-Country-Specific-Cross-Border-Shipping-Requirements",
+    alerts_url: "https://help.shipstation.com/hc/en-us/articles/25007865974299-Country-Specific-Cross-Border-Shipping-Requirements",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
   {
     id: "pitney_bowes", name: "Pitney Bowes", full_name: "Pitney Bowes Global Shipping",
     category: "3pl", hq: "US",
-    source_url: "https://www.pitneybowes.com/us/global-ecommerce.html",
-    alerts_url: "https://www.pitneybowes.com/us/global-ecommerce.html",
+    source_url: "https://docs.shippingapi.pitneybowes.com/carriers/cbds-compliance.html",
+    alerts_url: "https://docs.shippingapi.pitneybowes.com/carriers/cbds-compliance.html",
     restrictions: [...OFAC_US, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
   {
     id: "asendia", name: "Asendia", full_name: "Asendia Group",
     category: "3pl", hq: "Switzerland",
-    source_url: "https://www.asendia.com/",
-    alerts_url: "https://www.asendia.com/",
+    source_url: "https://www.asendia.com/service-update",
+    alerts_url: "https://www.asendia.com/service-update",
     restrictions: [...OFAC_INTL, ...RUSSIA_BELARUS, ...CONFLICT_LIMITED],
   },
 
@@ -410,20 +410,20 @@ const COMMON_HAZMAT = [
 
 // ── Product source URLs (prohibited/restricted items pages, not country pages) ─
 const PRODUCT_URLS = {
-  ups:          "https://www.ups.com/us/en/support/shipping-special-care-regulated-items.page",
-  fedex:        "https://www.fedex.com/en-us/shipping/restricted-items.html",
-  dhl_express:  "https://www.dhl.com/us-en/home/our-divisions/express/shipping-services/prohibited-items.html",
+  ups:          "https://www.ups.com/us/en/support/shipping-support/shipping-special-care-regulated-items/prohibited-items",
+  fedex:        "https://www.fedex.com/en-us/shipping/international-prohibited-items.html",
+  dhl_express:  "https://www.dhl.com/discover/en-us/ship-with-dhl/start-shipping/restricted-commodities",
   usps:         "https://www.usps.com/ship/shipping-restrictions.htm",
-  canada_post:  "https://www.canadapost-postescanada.ca/cpc/en/personal/sending/prohibited-non-mailable-matter.page",
-  royal_mail:   "https://www.royalmail.com/sending/prohibited-and-restricted-items",
-  tnt:          "https://www.tnt.com/express/en_gc/site/shipping-tools/prohibited-goods.html",
-  purolator:    "https://www.purolator.com/en/shipping-services/what-can-i-ship/prohibited-items",
-  shipbob:      "https://help.shipbob.com/s/article/Prohibited-Products",
-  flexport:     "https://www.flexport.com/compliance/",
-  easyship:     "https://support.easyship.com/hc/en-us/articles/360035900012",
-  shippo:       "https://support.goshippo.com/hc/en-us/articles/360025789131",
-  shipstation:  "https://help.shipstation.com/hc/en-us/articles/360026152791",
-  pitney_bowes: "https://www.pitneybowes.com/us/global-ecommerce.html",
+  canada_post:  "https://www.canadapost-postescanada.ca/cpc/en/support/articles/non-mailable-matter/prohibited-items-overview.page",
+  royal_mail:   "https://help.royalmail.com/personal/s/article/Prohibited-and-restricted-items-personal-customer-guidelines",
+  tnt:          "https://www.tnt.com/express/en_gc/site/how-to/what-you-can-ship.html",
+  purolator:    "https://www.purolator.com/en/special-handling-and-dangerous-goods",
+  shipbob:      "https://support.shipbob.com/s/article/ShipBob-Prohibited-and-Restricted-Items-Policy",
+  flexport:     "https://support.portal.flexport.com/hc/en-us/articles/115002943554-Restricted-Products",
+  easyship:     "https://support.easyship.com/hc/en-us/sections/19220990214290-Restricted-Prohibited-Goods",
+  shippo:       "https://support.goshippo.com/hc/en-us/articles/37466464049563-Shipping-Dangerous-Prohibited-and-Hazardous-Goods",
+  shipstation:  "https://help.shipstation.com/hc/en-us/articles/360045863811-Can-I-ship-hazardous-or-dangerous-materials",
+  pitney_bowes: "https://docs.shippingapi.pitneybowes.com/carriers/cbds-compliance.html",
 };
 
 // ── Product restrictions by carrier ID ────────────────────────────────────────
@@ -632,7 +632,7 @@ async function scrapeDHL() {
 async function scrapeCanadaPost() {
   console.log("  Trying Canada Post live scrape...");
   const html = await fetchPage(
-    "https://www.canadapost-postescanada.ca/cpc/en/personal/sending/international/service-alerts.page"
+    "https://www.canadapost-postescanada.ca/cpc/en/support/personal/international-destinations-listing.page"
   );
   if (!html) return null;
 
